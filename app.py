@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+import os
+from flask import Flask, render_template, send_from_directory, redirect, url_for
 
 app = Flask(__name__)
 
@@ -10,6 +11,10 @@ def hello_world():
 @app.route('/name')
 def name():
     return render_template("index.html", name = 'Володька')
+    
+@app.route('/favicon.ico')
+def fav():
+    return redirect(url_for('static', filename='favicon.ico'), code=302)
     
 
 if __name__ == '__main__':
