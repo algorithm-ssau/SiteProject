@@ -57,7 +57,33 @@ class WorkWithDB():
             res = Result(False, traceback.print_exc())
 
         return res
+
+    def DeleteOneFromDatabase(self, city, filter, isTeacher):
+        '''Удалить все объекты, подходящие под фильтр'''   
+        res = Result(True, ' ')
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+
+            if(isTeacher):
+                nameCollect = city+'teachers'
+                collect = db[nameCollect]
+            else:
+                nameCollect = city+'students'
+                collect = db[nameCollect]  
+
+            collect.delete_many(filter)
+            res = Result(True, "")
+        except Exception:
+            res = Result(False, traceback.print_exc())
+
+        return res;    
+
+
             
 test = WorkWithDB()
-user = {"name":"Vladimir", "Telephone":"89277530000", "Login":"NiceLogin"}
+user = {"name":"Irina", "Telephone":"89200000000", "Login":"NtreceLogin"}
 test.AddToDatabase("SAMARA", False, user)
+
+filter = {"name": "Polya"}
+test.DeleteOneFromDatabase("SAMARA", filter, True)
