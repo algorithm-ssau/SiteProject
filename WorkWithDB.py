@@ -2,25 +2,31 @@ import pymongo
 from pymongo import MongoClient
 import traceback
 
-class Result():        
+class Result():
+    '''статические атрибуты'''
+    isGood = False
+    ErrorMessage = "green"    
 
-        def __init__(self, isGood, ErrorMessage):
-            self.isGood = bool(isGood)
-            self.ErrorMessage = ErrorMessage
+    def __init__(self, isGood, ErrorMessage):
+        self.isGood = bool(isGood)
+        self.ErrorMessage = ErrorMessage
         
-        def getErrorMessage(self): return self.ErrorMessage 
+    @staticmethod
+    def getErrorMessage(): return Result.ErrorMessage 
 
-        def setIsGoodVariable(self, isGood):
-            self.isGood = isGood
+    @staticmethod
+    def setIsGoodVariable(isGood):
+        Result.isGood = isGood
 
-        def setErrorMessage(self, ErrorMessage):
-            self.ErrorMessage = ErrorMessage
+    @staticmethod
+    def setErrorMessage(ErrorMessage):
+        Result.ErrorMessage = ErrorMessage
 
 class WorkWithDB():
     ''''Класс результата операции. Сюда заносить isGood = true, если всё хорошо
     и обе переменные, если есть косяки и операция не получилась'''
-    
-    def AddToDatabase(self, city, isTeacher, user):
+    @staticmethod
+    def AddToDatabase(city, isTeacher, user):
         res = Result(True, ' ')
 
         try:
@@ -32,8 +38,6 @@ class WorkWithDB():
                 nameCollect = city+'teachers'
                 collect = db[nameCollect]
                 collect.insert_one(user)
-
-                
 
             else:
                 nameCollect = city+'students'
@@ -57,8 +61,8 @@ class WorkWithDB():
             res = Result(False, traceback.print_exc())
 
         return res
-
-    def DeleteOneFromDatabase(self, city, filter, isTeacher):
+    @staticmethod
+    def DeleteOneFromDatabase(city, filter, isTeacher):
         '''Удалить все объекты, подходящие под фильтр'''   
         res = Result(True, ' ')
         try:
@@ -77,13 +81,16 @@ class WorkWithDB():
         except Exception:
             res = Result(False, traceback.print_exc())
 
-        return res;    
+        return res  
 
 
             
 test = WorkWithDB()
-user = {"name":"Irina", "Telephone":"89200000000", "Login":"NtreceLogin"}
-test.AddToDatabase("SAMARA", False, user)
+user = {"name":"Daniil", "Telephone":"89201122088", "Login":"Test2"}
+'''WorkWithDB.AddToDatabase("SAMARA", True, user)'''
 
-filter = {"name": "Polya"}
-test.DeleteOneFromDatabase("SAMARA", filter, True)
+filter = {"name":"Daniil"}
+WorkWithDB.DeleteOneFromDatabase("SAMARA", filter, True)
+
+'''filter = {"name": "Polya"}
+test.DeleteOneFromDatabase("SAMARA", filter, True)'''
