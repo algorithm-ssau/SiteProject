@@ -3,9 +3,9 @@ from pymongo import MongoClient
 import traceback
 
 class Result():
-    '''статические атрибуты'''
+    
     isGood = False
-    ErrorMessage = "green"    
+    ErrorMessage = " "    
 
     def __init__(self, isGood, ErrorMessage):
         self.isGood = bool(isGood)
@@ -61,10 +61,11 @@ class WorkWithDB():
             res = Result(False, traceback.print_exc())
 
         return res
+
     @staticmethod
-    def DeleteOneFromDatabase(city, filter, isTeacher):
+    def DeleteAllFromDatabase(city, filter, isTeacher):
         '''Удалить все объекты, подходящие под фильтр'''   
-        res = Result(True, ' ')
+        res = Result(False, ' ')
         try:
             client = MongoClient()
             db = client['UsersDB']
@@ -81,16 +82,86 @@ class WorkWithDB():
         except Exception:
             res = Result(False, traceback.print_exc())
 
-        return res  
+        return res 
 
+    @staticmethod
+    def DeleteOneFromDatabase(city, filter, isTeacher):
+        res = Result(False, ' ')
+        
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+
+            if(isTeacher):
+                nameCollect = city+'teachers'
+                collect = db[nameCollect]
+            else:
+                nameCollect = city+'students'
+                collect = db[nameCollect] 
+
+            if(collect.count_documents(filter)>1):
+                res = Result(False, ' ')
+            else:
+                doc = dict(collect.find_one(filter))             
+                telUser = doc.get("Telephone")
+                logUser = doc.get("Login")
+                telephone = db.PhoneNumber
+                login = db.Login
+                telephone.delete_one({"Telephone": str(telUser)})
+                login.delete_one({"Login": str(logUser)})
+                collect.delete_one(filter)
+                res = Result(True, ' ')
+                
+
+        except Exception:
+            res = Result(False, traceback.print_exc())
+
+        return res
+
+    @staticmethod
+    def GetRecordOnFilter(city, filter, isTeacher):
+     
+        #res = Result(False, ' ')
+        listUser = [] 
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+
+            if(isTeacher):
+                nameCollect = city+'students'
+                collect = db[nameCollect]
+
+                ##collect.count_documents(filter)
+
+                ##cursorUser = collect.find(filter)
+                ##while(cursorUser.hasNext()):
+                ##    listUser.append(cursorUser.next())                
+
+            else:
+                nameCollect = city+'teachers'
+                collect = db[nameCollect]
+
+                ##cursorUser = collect.find(filter)
+                #while(cursorUser.hasNext()):
+                #    listUser.append(cursorUser.next())
 
             
-test = WorkWithDB()
-user = {"name":"Daniil", "Telephone":"89201122088", "Login":"Test2"}
-'''WorkWithDB.AddToDatabase("SAMARA", True, user)'''
 
-filter = {"name":"Daniil"}
-WorkWithDB.DeleteOneFromDatabase("SAMARA", filter, True)
+            res = Result(True, ' ')
+        except Exception:
+            res = Result(False, traceback.print_exc())
+        
+        return listUser
 
-'''filter = {"name": "Polya"}
-test.DeleteOneFromDatabase("SAMARA", filter, True)'''
+            
+#test = WorkWithDB()
+user = {"name":"Polya", "Telephone":"89799088888", "Login":"Test11","Password":"test11" }
+#WorkWithDB.AddToDatabase("SAMARA", False, user)
+
+
+#filter = {"name" :"Vladimir"}
+#WorkWithDB.DeleteAllFromDatabase("SAMARA", filter, False)
+##WorkWithDB.DeleteOneFromDatabase("SAMARA", filter, False)
+
+filter = {"name": "Vladimir"} #89781441111  Test6
+WorkWithDB.DeleteOneFromDatabase("SAMARA", filter, False)
