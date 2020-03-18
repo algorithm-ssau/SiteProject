@@ -64,7 +64,7 @@ class WorkWithDB():
 
     @staticmethod
     def DeleteAllFromDatabase(city, filter, isTeacher):
-        '''Удалить все объекты, подходящие под фильтр'''   
+        #Удалить все объекты, подходящие под фильтр   
         res = Result(False, ' ')
         try:
             client = MongoClient()
@@ -76,6 +76,22 @@ class WorkWithDB():
             else:
                 nameCollect = city+'students'
                 collect = db[nameCollect]  
+
+            listUser = list(collect.find(filter))
+            listTel = []
+            listLog = []
+            for user in listUser:
+                listTel.append({"Telephone":str(user.get("Telephone"))})
+                listLog.append({"Login":str(user.get("Login"))})
+                print(listLog)
+            telephone = db.PhoneNumber
+            login = db.Login
+            
+            for i in listTel:
+                telephone.delete_one(i)
+
+            for j in listLog:
+                login.delete_one(j)
 
             collect.delete_many(filter)
             res = Result(True, "")
@@ -146,18 +162,21 @@ class WorkWithDB():
 
             
 #test = WorkWithDB()
-user = {"name":"Vladimir", "Telephone":"89277534488", "Login":"Test12","Password":"test12" }
-WorkWithDB.AddToDatabase("SAMARA", True, user)
+user = {"name":"Polya", "Telephone":"89277538800", "Login":"Test13","Password":"test13" }
+#WorkWithDB.AddToDatabase("SAMARA", False, user)
 
 
 #filter = {"name" :"Vladimir"}
-#WorkWithDB.DeleteAllFromDatabase("SAMARA", filter, False)
+#
 ##WorkWithDB.DeleteOneFromDatabase("SAMARA", filter, False)
 
-filter = {"name": "Vladimir"} #8979908888  Test6
+filter = {"name": "Basya"} #89277538800  Test6
+WorkWithDB.DeleteAllFromDatabase("SAMARA", filter, True)
 #WorkWithDB.DeleteOneFromDatabase("SAMARA", filter, False)
 
-print(WorkWithDB.GetRecordOnFilter("SAMARA", filter, False))
+#print(WorkWithDB.GetRecordOnFilter("SAMARA", filter, False))
 
 
 
+#"Alina"Telephone"89799077711"
+#Login"Test9"
