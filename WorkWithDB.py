@@ -120,8 +120,7 @@ class WorkWithDB():
 
     @staticmethod
     def GetRecordOnFilter(city, filter, isTeacher):
-     
-        #res = Result(False, ' ')
+     #если запрос делает ученик, то искать будем в учителях
         listUser = [] 
         try:
             client = MongoClient()
@@ -129,23 +128,15 @@ class WorkWithDB():
 
             if(isTeacher):
                 nameCollect = city+'students'
-                collect = db[nameCollect]
-
-                ##collect.count_documents(filter)
-
-                ##cursorUser = collect.find(filter)
-                ##while(cursorUser.hasNext()):
-                ##    listUser.append(cursorUser.next())                
+                collect = db[nameCollect]               
 
             else:
                 nameCollect = city+'teachers'
-                collect = db[nameCollect]
+                collect = db[nameCollect]            
 
-                ##cursorUser = collect.find(filter)
-                #while(cursorUser.hasNext()):
-                #    listUser.append(cursorUser.next())
-
-            
+            cursorUser = collect.find(filter)
+            for user in cursorUser:
+                listUser.append(dict(user))        
 
             res = Result(True, ' ')
         except Exception:
@@ -155,13 +146,18 @@ class WorkWithDB():
 
             
 #test = WorkWithDB()
-user = {"name":"Polya", "Telephone":"89799088888", "Login":"Test11","Password":"test11" }
-#WorkWithDB.AddToDatabase("SAMARA", False, user)
+user = {"name":"Vladimir", "Telephone":"89277534488", "Login":"Test12","Password":"test12" }
+WorkWithDB.AddToDatabase("SAMARA", True, user)
 
 
 #filter = {"name" :"Vladimir"}
 #WorkWithDB.DeleteAllFromDatabase("SAMARA", filter, False)
 ##WorkWithDB.DeleteOneFromDatabase("SAMARA", filter, False)
 
-filter = {"name": "Vladimir"} #89781441111  Test6
-WorkWithDB.DeleteOneFromDatabase("SAMARA", filter, False)
+filter = {"name": "Vladimir"} #8979908888  Test6
+#WorkWithDB.DeleteOneFromDatabase("SAMARA", filter, False)
+
+print(WorkWithDB.GetRecordOnFilter("SAMARA", filter, False))
+
+
+
