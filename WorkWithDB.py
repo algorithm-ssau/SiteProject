@@ -83,7 +83,7 @@ class WorkWithDB():
             for user in listUser:
                 listTel.append({"Telephone":str(user.get("Telephone"))})
                 listLog.append({"Login":str(user.get("Login"))})
-                print(listLog)
+                
             telephone = db.PhoneNumber
             login = db.Login
             
