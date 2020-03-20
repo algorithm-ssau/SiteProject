@@ -223,28 +223,48 @@ class WorkWithDB():
         except Exception:
             res = Result(False, traceback.print_exc())   
 
-        return res.ErrorMessage   
+        return res.ErrorMessage  
 
-            
-#test = WorkWithDB()
-user = {"name":"Polya", "Telephone":"89277538800", "Login":"Test13","Password":"test13" }
-user1 = {"name":"Polya", "Telephone":"89277538800", "Login":"Test13","Password":"test13"}
-#WorkWithDB.AddToDatabase("SAMARA", False, user)
-#print(WorkWithDB.ChangeRecordInDatabase("SAMARA", user, user1, False))
-print(WorkWithDB.GetUserID("SAMARA", user, False))
+    @staticmethod
+    def CheckUserTelephone(user):
+        #Если вернулся true - добавляем запись
+        #
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+            res = Result(False, '')
+            telephone = db.PhoneNumber
+            telUser = user.get("Telephone")
+            filter = {"Telephone": str(telUser)}
+            #если мы добавляем новую запись => такого номера еще нет
+            if(telephone.count_documents(filter)>=1):
+                res.isGood = False
+            else:
+                res.isGood = True
 
+        except Exception:
+            res = Result(False, traceback.print_exc())
 
-#filter = {"name" :"Vladimir"}
-#
-##WorkWithDB.DeleteOneFromDatabase("SAMARA", filter, False)
+        return res.isGood
 
-filter = {"name": "Basya"} #89277538800  Test6
-#WorkWithDB.DeleteAllFromDatabase("SAMARA", filter, True)
-#WorkWithDB.DeleteOneFromDatabase("SAMARA", filter, False)
+    @staticmethod
+    def CheckUserLogin(user):
+        #Если вернулся true - добавляем запись
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+            res = Result(False, '')
+            login = db.Login
+            logUser = user.get("Login")
+            filter = {"Login": str(logUser)}
+            #если мы добавляем новую запись => такого логина еще нет
+            if(login.count_documents(filter)>=1):
+                res.isGood = False
+            else:
+                res.isGood = True
 
-#print(WorkWithDB.GetRecordOnFilter("SAMARA", filter, False))
+        except Exception:
+            res = Result(False, traceback.print_exc())
 
+        return res.isGood
 
-
-#"Alina"Telephone"89799077711"
-#Login"Test9"
