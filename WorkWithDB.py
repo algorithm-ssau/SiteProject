@@ -160,10 +160,51 @@ class WorkWithDB():
         
         return listUser
 
+    @staticmethod
+    def ChangeRecordInDatabase( city, filter, newRecord, isTeacher):
+        # filter - полностью старая запись пользователя
+        # newRecord - полностью новая запись пользователя
+        
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+
+            if(isTeacher):
+                nameCollect = city+'teacher'
+                collect = db[nameCollect]               
+
+            else:
+                nameCollect = city+'students'
+                collect = db[nameCollect]    
+
+            if (collect.count_documents(filter)==1):
+                doc = dict(collect.find_one(filter))             
+                telUser = doc.get("Telephone")
+                logUser = doc.get("Login")
+                telUserNew = newRecord.get("Telephone")
+                logUserNew = newRecord.get("Login")
+                telephone = db.PhoneNumber
+                login = db.Login
+                telephone.update_one({"Telephone": str(telUser)},{'$set' : {"Telephone": str(telUserNew)}})
+                login.update_one({"Login": str(logUser)}, {'$set' :{"Login": str(logUserNew)}})
+                collect.update_one(filter,{'$set' :newRecord})
+                res = Result(True, " ")
+            else:
+                res = Result(False, " ")        
+
+            
+        except Exception:
+            res = Result(False, traceback.print_exc())
+
+        return res
+        
+
             
 #test = WorkWithDB()
-user = {"name":"Polya", "Telephone":"89277538800", "Login":"Test13","Password":"test13" }
+user = {"name":"Polya", "Telephone":"89277538800", "Login":"Test1301","Password":"test13" }
+user1 = {"name":"Polya", "Telephone":"89277538800", "Login":"Test13","Password":"test13"}
 #WorkWithDB.AddToDatabase("SAMARA", False, user)
+print(WorkWithDB.ChangeRecordInDatabase("SAMARA", user, user1, False))
 
 
 #filter = {"name" :"Vladimir"}
@@ -171,7 +212,7 @@ user = {"name":"Polya", "Telephone":"89277538800", "Login":"Test13","Password":"
 ##WorkWithDB.DeleteOneFromDatabase("SAMARA", filter, False)
 
 filter = {"name": "Basya"} #89277538800  Test6
-WorkWithDB.DeleteAllFromDatabase("SAMARA", filter, True)
+#WorkWithDB.DeleteAllFromDatabase("SAMARA", filter, True)
 #WorkWithDB.DeleteOneFromDatabase("SAMARA", filter, False)
 
 #print(WorkWithDB.GetRecordOnFilter("SAMARA", filter, False))
