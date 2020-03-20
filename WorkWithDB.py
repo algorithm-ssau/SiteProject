@@ -197,14 +197,41 @@ class WorkWithDB():
             res = Result(False, traceback.print_exc())
 
         return res
-        
+
+    @staticmethod
+    def GetUserID(city, filter, isTeacher):
+    
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+            res = Result(False, '')
+
+            if(isTeacher):
+                nameCollect = city+'teacher'
+                collect = db[nameCollect]               
+
+            else:
+                nameCollect = city+'students'
+                collect = db[nameCollect] 
+
+            if(collect.count_documents(filter)==1):
+                doc = dict(collect.find_one(filter))
+                idUser = doc.get("Telephone")
+                res = Result(True, idUser)          
+            
+
+        except Exception:
+            res = Result(False, traceback.print_exc())   
+
+        return res.ErrorMessage   
 
             
 #test = WorkWithDB()
-user = {"name":"Polya", "Telephone":"89277538800", "Login":"Test1301","Password":"test13" }
+user = {"name":"Polya", "Telephone":"89277538800", "Login":"Test13","Password":"test13" }
 user1 = {"name":"Polya", "Telephone":"89277538800", "Login":"Test13","Password":"test13"}
 #WorkWithDB.AddToDatabase("SAMARA", False, user)
-print(WorkWithDB.ChangeRecordInDatabase("SAMARA", user, user1, False))
+#print(WorkWithDB.ChangeRecordInDatabase("SAMARA", user, user1, False))
+print(WorkWithDB.GetUserID("SAMARA", user, False))
 
 
 #filter = {"name" :"Vladimir"}
