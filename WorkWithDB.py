@@ -216,7 +216,7 @@ class WorkWithDB():
 
             if(collect.count_documents(filter)==1):
                 doc = dict(collect.find_one(filter))
-                idUser = doc.get("Telephone")
+                idUser = doc.get("id")
                 res = Result(True, idUser)          
             
 
