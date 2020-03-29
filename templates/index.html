@@ -11,16 +11,31 @@
     </header>
     <form>
       <div class="container">
-        <h1>Register</h1>
+        <h1>Регистрация</h1>
         <hr>
+        <select name="cities" required="required">
+          <option value="">Ваш город</option>
+          <option value="Samara">Самара</option>
+          <option value="Moscow">Москва</option>
+          <option value="Kazan">Казань</option>
+          <option value="4">Красноярск</option>
+          <option value="5">Сочи</option>
+          <option value="6">Саранск</option>
+        </select>   
+        <label for="LastName"><b>Фамилия</b></label>
+        <input type="text" name="LastName" required>
+        <label for="FirstName"><b>Имя</b></label>
+        <input type="text" name="FirstName" required>
+        <label for="date"><b>Дата рождения</b></label>
+        <input type="date" id="date" name="date"/>
         <label for="email"><b>Email</b></label>
         <input type="text" placeholder="Enter Email" name="email" required>
         <label for="psw"><b>Password</b></label>
         <input type="password" placeholder="Enter Password" name="psw" required>
         <label for="psw-repeat"><b>Repeat Password</b></label>
         <input type="password" placeholder="Repeat Password" name="psw-repeat" required>
-        <input type="radio" name="status" value="a1"> I am tutor<br>
-        <input type="radio" name="status" value="a2"> I am student<br>
+        <!--<input type="radio" name="status" value="a1"> I am tutor<br>
+        <input type="radio" name="status" value="a2"> I am student<br>-->
         <hr>
         <button type="submit" class="registerbtn">Register</button>
       </div>
