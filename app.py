@@ -8,9 +8,9 @@ app = Flask(__name__)
 def hello_world():
     return 'Hello World!'
     
-@app.route('/name')
+@app.route('/newteacher')
 def name():
-    return render_template("index.html", name = 'Володька')
+    return render_template("index.html")
     
 @app.route('/favicon.ico')
 def fav():
