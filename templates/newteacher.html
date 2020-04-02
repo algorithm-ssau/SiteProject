@@ -9,18 +9,18 @@
     <header>
     <h1></h1>
     </header>
-    <form>
+    <form method="post">
       <div class="container">
         <h1>Регистрация</h1>
         <hr>
         <label for="cities"><b>Ваш город</b></label>
         <select name="cities" required="required">
-          <option value="Samara">Самара</option>
-          <option value="Moscow">Москва</option>
-          <option value="Kazan">Казань</option>
-          <option value="Krasnoyarsk">Красноярск</option>
-          <option value="Sochi">Сочи</option>
-          <option value="Saransk">Саранск</option>
+          <option value="SAMARA">Самара</option>
+          <option value="MOSCOW">Москва</option>
+          <option value="KAZAN">Казань</option>
+          <option value="KRASNOYARSK">Красноярск</option>
+          <option value="SOCHI">Сочи</option>
+          <option value="SARANSK">Саранск</option>
         </select>   
 
         <label for="LastName"><b>Фамилия</b></label>
@@ -39,18 +39,18 @@
 
         <label for="education"><p><b>Образование</b></p></label>
         <select name="education" required="required">
-          <option value="Student">Студент</option>
-          <option value="Postgraduate">Аспирант</option>
-          <option value="Teacher">Учитель</option>
-          <option value="Educator">Преподаватель</option>
+          <option value="Студент">Студент</option>
+          <option value="Аспирант">Аспирант</option>
+          <option value="Учитель">Учитель</option>
+          <option value="Преподаватель">Преподаватель</option>
         </select><Br>
 
         <label for="experience"><b>Стаж преподавания</b></label><Br>
         <input type="number" placeholder="Полных лет" name="experience" required><Br>
 
         <label for="sex"><p><b>Пол</b></p></label>
-        <input type="radio" name="sex" value="male">Мужской<Br>
-        <input type="radio" name="sex" value="female">Женский<Br>
+        <input type="radio" name="sex" value="Мужской">Мужской<Br>
+        <input type="radio" name="sex" value="Женский">Женский<Br>
 
         <label for="phone"><p><b>Телефон</b></p></label>
         <input type="tel" placeholder="В формате 89***." name="phone" pattern="[0-9]{11}" required>
@@ -82,7 +82,7 @@
         <p><b>Вид занятий</b></p>
         <input type="checkbox" name="single" value="c1"><label for="single">Разовые</label><Br>
         <input type="checkbox" name="group" value="c2"><label for="group">Групповые</label><Br>
-        <input type="checkbox" name="home" value="c3"><label for="home">Домашние</label><Br> 
+        <input type="checkbox" name="home" value="c3"><label for="home">Помощь с домашней работой</label><Br> 
         <input type="checkbox" name="usual" value="c4"><label for="usual">Обычные</label><Br>
         <hr>
         <button type="submit" class="registerbtn">Зарегистрироваться</button>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TUTOR</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{{ url_for("static", filename="style.css") }}">
+  </head>
+  <body>
+    <header>
+    <h1></h1>
+    </header>
+    <form>
+      <div class="container">
+        <h1>Авторизируйтесь</h1>
+        <hr>
+        <label for="email"><b>Логин</b></label>
+        <input type="text" placeholder="Введите логин" name="email">
+        <label for="psw"><b>Пароль</b></label>
+        <input type="password" placeholder="Введите пароль" name="psw">
+        <hr>
+        <button type="button" class="registerbtn" onClick='location.href="/newteacher"'>Регистрация</button>
+      </div>
+    </form>
+  </body> 
+</html>

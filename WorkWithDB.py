@@ -44,13 +44,13 @@ class WorkWithDB():
                 collect = db[nameCollect]
                 collect.insert_one(user)
 
-            number = user.get("Telephone")
-            doc ={"Telephone": str(number)}
+            number = user.get("Телефон")
+            doc ={"Телефон": str(number)}
             teachersNum = db.PhoneNumber
             teachersNum.insert_one(doc)
 
-            login = user.get("Login")
-            doc_log ={"Login": str(login)}
+            login = user.get("Логин")
+            doc_log ={"Логин": str(login)}
             usersLogin = db.Login
             usersLogin.insert_one(doc_log)
 
@@ -81,8 +81,8 @@ class WorkWithDB():
             listTel = []
             listLog = []
             for user in listUser:
-                listTel.append({"Telephone":str(user.get("Telephone"))})
-                listLog.append({"Login":str(user.get("Login"))})
+                listTel.append({"Телефон":str(user.get("Телефон"))})
+                listLog.append({"Логин":str(user.get("Логин"))})
                 
             telephone = db.PhoneNumber
             login = db.Login
@@ -119,12 +119,12 @@ class WorkWithDB():
                 res = Result(False, ' ')
             else:
                 doc = dict(collect.find_one(filter))             
-                telUser = doc.get("Telephone")
-                logUser = doc.get("Login")
+                telUser = doc.get("Телефон")
+                logUser = doc.get("Логин")
                 telephone = db.PhoneNumber
                 login = db.Login
-                telephone.delete_one({"Telephone": str(telUser)})
-                login.delete_one({"Login": str(logUser)})
+                telephone.delete_one({"Телефон": str(telUser)})
+                login.delete_one({"Логин": str(logUser)})
                 collect.delete_one(filter)
                 res = Result(True, ' ')
                 
@@ -179,14 +179,14 @@ class WorkWithDB():
 
             if (collect.count_documents(filter)==1):
                 doc = dict(collect.find_one(filter))             
-                telUser = doc.get("Telephone")
-                logUser = doc.get("Login")
-                telUserNew = newRecord.get("Telephone")
-                logUserNew = newRecord.get("Login")
+                telUser = doc.get("Телефон")
+                logUser = doc.get("Логин")
+                telUserNew = newRecord.get("Телефон")
+                logUserNew = newRecord.get("Логин")
                 telephone = db.PhoneNumber
                 login = db.Login
-                telephone.update_one({"Telephone": str(telUser)},{'$set' : {"Telephone": str(telUserNew)}})
-                login.update_one({"Login": str(logUser)}, {'$set' :{"Login": str(logUserNew)}})
+                telephone.update_one({"Телефон": str(telUser)},{'$set' : {"Телефон": str(telUserNew)}})
+                login.update_one({"Логин": str(logUser)}, {'$set' :{"Логин": str(logUserNew)}})
                 collect.update_one(filter,{'$set' :newRecord})
                 res = Result(True, " ")
             else:
@@ -234,8 +234,8 @@ class WorkWithDB():
             db = client['UsersDB']
             res = Result(False, '')
             telephone = db.PhoneNumber
-            telUser = user.get("Telephone")
-            filter = {"Telephone": str(telUser)}
+            telUser = user.get("Телефон")
+            filter = {"Телефон": str(telUser)}
             #если мы добавляем новую запись => такого номера еще нет
             if(telephone.count_documents(filter)>=1):
                 res.isGood = False
@@ -255,8 +255,8 @@ class WorkWithDB():
             db = client['UsersDB']
             res = Result(False, '')
             login = db.Login
-            logUser = user.get("Login")
-            filter = {"Login": str(logUser)}
+            logUser = user.get("Логин")
+            filter = {"Логин": str(logUser)}
             #если мы добавляем новую запись => такого логина еще нет
             if(login.count_documents(filter)>=1):
                 res.isGood = False
