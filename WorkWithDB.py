@@ -9,25 +9,22 @@ class Result():
 
     def __init__(self, isGood, ErrorMessage):
         self.isGood = bool(isGood)
+        self.ErrorMessage = ErrorMessage        
+    
+    def getErrorMessage(self): return self.ErrorMessage 
+    
+    def setIsGoodVariable(self, isGood):
+        self.isGood = isGood
+
+    def setErrorMessage(self, ErrorMessage):
         self.ErrorMessage = ErrorMessage
-        
-    @staticmethod
-    def getErrorMessage(): return Result.ErrorMessage 
-
-    @staticmethod
-    def setIsGoodVariable(isGood):
-        Result.isGood = isGood
-
-    @staticmethod
-    def setErrorMessage(ErrorMessage):
-        Result.ErrorMessage = ErrorMessage
 
 class WorkWithDB():
     ''''Класс результата операции. Сюда заносить isGood = true, если всё хорошо
     и обе переменные, если есть косяки и операция не получилась'''
     @staticmethod
     def AddToDatabase(city, isTeacher, user):
-        res = Result(True, ' ')
+        res = Result(True, "")
 
         try:
             
@@ -44,23 +41,31 @@ class WorkWithDB():
                 collect = db[nameCollect]
                 collect.insert_one(user)
 
-            number = user.get("Телефон")
-            doc ={"Телефон": str(number)}
-            teachersNum = db.PhoneNumber
-            teachersNum.insert_one(doc)
+            if(WorkWithDB.CheckUserTelephone(user) and WorkWithDB.CheckUserLogin(user)):
+                number = user.get("Телефон")
+                doc ={"Телефон": str(number)}
+                teachersNum = db.PhoneNumber
+                teachersNum.insert_one(doc) 
 
-            login = user.get("Логин")
-            doc_log ={"Логин": str(login)}
-            usersLogin = db.Login
-            usersLogin.insert_one(doc_log)
+                login = user.get("Логин")
+                doc_log ={"Логин": str(login)}
+                usersLogin = db.Login
+                usersLogin.insert_one(doc_log)            
+            else:
+                res.setIsGoodVariable(False)            
 
-            res = Result(True, "")
+            if(res.isGood==False):
+                res.setErrorMessage("Пользователь с таким логином/паролем уже существует.")
+            else:
+                res.setIsGoodVariable(True)
+                res.setErrorMessage("Регистрация выполнена!")
 
 
         except Exception :
-            res = Result(False, traceback.print_exc())
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка: неправильно заполнены поля.")
 
-        return res
+        return res.getErrorMessage()
 
     @staticmethod
     def DeleteAllFromDatabase(city, filter, isTeacher):
@@ -94,11 +99,13 @@ class WorkWithDB():
                 login.delete_one(j)
 
             collect.delete_many(filter)
-            res = Result(True, "")
+            res.setIsGoodVariable(True)
+            res.setErrorMessage("Удаление выполнено")
         except Exception:
-            res = Result(False, traceback.print_exc())
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
 
-        return res 
+        return res.getErrorMessage()
 
     @staticmethod
     def DeleteOneFromDatabase(city, filter, isTeacher):
@@ -116,7 +123,8 @@ class WorkWithDB():
                 collect = db[nameCollect] 
 
             if(collect.count_documents(filter)>1):
-                res = Result(False, ' ')
+                res.setIsGoodVariable(False)
+                res.setErrorMessage("Много записей, подходящих под фильтер!")
             else:
                 doc = dict(collect.find_one(filter))             
                 telUser = doc.get("Телефон")
@@ -126,11 +134,12 @@ class WorkWithDB():
                 telephone.delete_one({"Телефон": str(telUser)})
                 login.delete_one({"Логин": str(logUser)})
                 collect.delete_one(filter)
-                res = Result(True, ' ')
+                res.setIsGoodVariable(True)
+                res.setErrorMessage("Удаление выполнено успешно!")
                 
 
         except Exception:
-            res = Result(False, traceback.print_exc())
+            res = Result(False,"Ошибка выполнения операции.")
 
         return res
 
@@ -152,11 +161,11 @@ class WorkWithDB():
 
             cursorUser = collect.find(filter)
             for user in cursorUser:
-                listUser.append(dict(user))        
+                listUser.append(dict(user))       
 
-            res = Result(True, ' ')
+            res = Result(True, "Операция выполнена успешно.")
         except Exception:
-            res = Result(False, traceback.print_exc())
+            res = Result(False, "Ошибка выполнения операции.")
         
         return listUser
 
@@ -164,7 +173,7 @@ class WorkWithDB():
     def ChangeRecordInDatabase( city, filter, newRecord, isTeacher):
         # filter - полностью старая запись пользователя
         # newRecord - полностью новая запись пользователя
-        
+        res = Result(False, "")
         try:
             client = MongoClient()
             db = client['UsersDB']
@@ -188,19 +197,21 @@ class WorkWithDB():
                 telephone.update_one({"Телефон": str(telUser)},{'$set' : {"Телефон": str(telUserNew)}})
                 login.update_one({"Логин": str(logUser)}, {'$set' :{"Логин": str(logUserNew)}})
                 collect.update_one(filter,{'$set' :newRecord})
-                res = Result(True, " ")
+                res.setIsGoodVariable(True)
+                res.setErrorMessage("Успешно")
             else:
-                res = Result(False, " ")        
+                res = Result(False, "Много записей добходит под фильтер.")        
 
             
         except Exception:
-            res = Result(False, traceback.print_exc())
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
 
-        return res
+        return res.isGood
 
     @staticmethod
     def GetUserID(city, filter, isTeacher):
-    
+        res = Result(False, "")
         try:
             client = MongoClient()
             db = client['UsersDB']
@@ -217,13 +228,15 @@ class WorkWithDB():
             if(collect.count_documents(filter)==1):
                 doc = dict(collect.find_one(filter))
                 idUser = doc.get("id")
-                res = Result(True, idUser)          
+                res.setIsGoodVariable(True)
+                res.setErrorMessage(idUser)  
             
 
         except Exception:
-            res = Result(False, traceback.print_exc())   
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции")   
 
-        return res.ErrorMessage  
+        return res.getErrorMessage() 
 
     @staticmethod
     def CheckUserTelephone(user):
@@ -238,12 +251,13 @@ class WorkWithDB():
             filter = {"Телефон": str(telUser)}
             #если мы добавляем новую запись => такого номера еще нет
             if(telephone.count_documents(filter)>=1):
-                res.isGood = False
+                res.setIsGoodVariable(False)
             else:
-                res.isGood = True
+                res.setIsGoodVariable(True)
 
         except Exception:
-            res = Result(False, traceback.print_exc())
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
 
         return res.isGood
 
@@ -259,12 +273,13 @@ class WorkWithDB():
             filter = {"Логин": str(logUser)}
             #если мы добавляем новую запись => такого логина еще нет
             if(login.count_documents(filter)>=1):
-                res.isGood = False
+                res.setErrorMessage(False)
             else:
-                res.isGood = True
+                res.setIsGoodVariable(True)
 
         except Exception:
-            res = Result(False, traceback.print_exc())
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции")
 
         return res.isGood
 
