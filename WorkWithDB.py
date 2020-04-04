@@ -5,11 +5,13 @@ import traceback
 class Result():
     
     isGood = False
-    ErrorMessage = " "    
+    ErrorMessage = " " 
+    listRes = []   
 
-    def __init__(self, isGood, ErrorMessage):
+    def __init__(self, isGood, ErrorMessage, listRes):
         self.isGood = bool(isGood)
-        self.ErrorMessage = ErrorMessage        
+        self.ErrorMessage = ErrorMessage
+        self.listRes = listRes    
     
     def getErrorMessage(self): return self.ErrorMessage 
     
@@ -19,29 +21,32 @@ class Result():
     def setErrorMessage(self, ErrorMessage):
         self.ErrorMessage = ErrorMessage
 
+    def setList(self, listRes):
+        self.listRes = listRes
+
 class WorkWithDB():
     ''''Класс результата операции. Сюда заносить isGood = true, если всё хорошо
     и обе переменные, если есть косяки и операция не получилась'''
     @staticmethod
     def AddToDatabase(city, isTeacher, user):
-        res = Result(True, "")
+        res = Result(True, "",[])
 
         try:
             
             client = MongoClient()
-            db = client['UsersDB']
-
-            if isTeacher:
-                nameCollect = city+'teachers'
-                collect = db[nameCollect]
-                collect.insert_one(user)
-
-            else:
-                nameCollect = city+'students'
-                collect = db[nameCollect]
-                collect.insert_one(user)
+            db = client['UsersDB']            
 
             if(WorkWithDB.CheckUserTelephone(user) and WorkWithDB.CheckUserLogin(user)):
+
+                if isTeacher:
+                    nameCollect = city+'teachers'
+                    collect = db[nameCollect]
+                    collect.insert_one(user)
+                else:
+                    nameCollect = city+'students'
+                    collect = db[nameCollect]
+                    collect.insert_one(user)
+
                 number = user.get("Телефон")
                 doc ={"Телефон": str(number)}
                 teachersNum = db.PhoneNumber
@@ -65,12 +70,12 @@ class WorkWithDB():
             res.setIsGoodVariable(False)
             res.setErrorMessage("Ошибка: неправильно заполнены поля.")
 
-        return res.getErrorMessage()
+        return res
 
     @staticmethod
     def DeleteAllFromDatabase(city, filter, isTeacher):
         #Удалить все объекты, подходящие под фильтр   
-        res = Result(False, ' ')
+        res = Result(False, ' ',[])
         try:
             client = MongoClient()
             db = client['UsersDB']
@@ -105,11 +110,11 @@ class WorkWithDB():
             res.setIsGoodVariable(False)
             res.setErrorMessage("Ошибка выполнения операции.")
 
-        return res.getErrorMessage()
+        return res
 
     @staticmethod
     def DeleteOneFromDatabase(city, filter, isTeacher):
-        res = Result(False, ' ')
+        res = Result(False, ' ',[])
         
         try:
             client = MongoClient()
@@ -139,7 +144,8 @@ class WorkWithDB():
                 
 
         except Exception:
-            res = Result(False,"Ошибка выполнения операции.")
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
 
         return res
 
@@ -147,6 +153,7 @@ class WorkWithDB():
     def GetRecordOnFilter(city, filter, isTeacher):
      #если запрос делает ученик, то искать будем в учителях
         listUser = [] 
+        res = Result(False," ",[])
         try:
             client = MongoClient()
             db = client['UsersDB']
@@ -161,19 +168,22 @@ class WorkWithDB():
 
             cursorUser = collect.find(filter)
             for user in cursorUser:
-                listUser.append(dict(user))       
+                listUser.append(dict(user))  
 
-            res = Result(True, "Операция выполнена успешно.")
+            res.setIsGoodVariable(True)
+            res.setErrorMessage("Операция выполнена успешно.")
+            res.setList(listUser)
         except Exception:
-            res = Result(False, "Ошибка выполнения операции.")
+            res.setIsGoodVariable(True)
+            res.setErrorMessage("Ошибка выполнения операции.")
         
-        return listUser
+        return res
 
     @staticmethod
     def ChangeRecordInDatabase( city, filter, newRecord, isTeacher):
         # filter - полностью старая запись пользователя
         # newRecord - полностью новая запись пользователя
-        res = Result(False, "")
+        res = Result(False, "",[])
         try:
             client = MongoClient()
             db = client['UsersDB']
@@ -200,22 +210,22 @@ class WorkWithDB():
                 res.setIsGoodVariable(True)
                 res.setErrorMessage("Успешно")
             else:
-                res = Result(False, "Много записей добходит под фильтер.")        
+                res.setIsGoodVariable(False)
+                res.setErrorMessage("Много записей добходит под фильтер.")        
 
             
         except Exception:
             res.setIsGoodVariable(False)
             res.setErrorMessage("Ошибка выполнения операции.")
 
-        return res.isGood
+        return res
 
     @staticmethod
     def GetUserID(city, filter, isTeacher):
-        res = Result(False, "")
+        res = Result(False, "",[])
         try:
             client = MongoClient()
             db = client['UsersDB']
-            res = Result(False, '')
 
             if(isTeacher):
                 nameCollect = city+'teacher'
@@ -236,16 +246,16 @@ class WorkWithDB():
             res.setIsGoodVariable(False)
             res.setErrorMessage("Ошибка выполнения операции")   
 
-        return res.getErrorMessage() 
+        return res
 
     @staticmethod
     def CheckUserTelephone(user):
         #Если вернулся true - добавляем запись
         #
+        res = Result(False,"",[])
         try:
             client = MongoClient()
             db = client['UsersDB']
-            res = Result(False, '')
             telephone = db.PhoneNumber
             telUser = user.get("Телефон")
             filter = {"Телефон": str(telUser)}
@@ -259,15 +269,15 @@ class WorkWithDB():
             res.setIsGoodVariable(False)
             res.setErrorMessage("Ошибка выполнения операции.")
 
-        return res.isGood
+        return res
 
     @staticmethod
     def CheckUserLogin(user):
         #Если вернулся true - добавляем запись
+        res = Result(False,"",[])
         try:
             client = MongoClient()
             db = client['UsersDB']
-            res = Result(False, '')
             login = db.Login
             logUser = user.get("Логин")
             filter = {"Логин": str(logUser)}
@@ -281,5 +291,11 @@ class WorkWithDB():
             res.setIsGoodVariable(False)
             res.setErrorMessage("Ошибка выполнения операции")
 
-        return res.isGood
+        return res
 
+user = {"Имя":"Полина", "Логин":"Полина","Телефон":"48152635680"}
+WorkWithDB.AddToDatabase("SAMARA", True, user)
+#WorkWithDB.AddToDatabase("SAMARA", True, user)
+#print(WorkWithDB.GetRecordOnFilter("SAMARA", user, False))
+#for x in listm:
+#    print(x)
