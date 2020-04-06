@@ -174,7 +174,7 @@ class WorkWithDB():
             res.setErrorMessage("Операция выполнена успешно.")
             res.setList(listUser)
         except Exception:
-            res.setIsGoodVariable(True)
+            res.setIsGoodVariable(False)
             res.setErrorMessage("Ошибка выполнения операции.")
         
         return res
@@ -240,7 +240,6 @@ class WorkWithDB():
                 idUser = doc.get("id")
                 res.setIsGoodVariable(True)
                 res.setErrorMessage(idUser)  
-            
 
         except Exception:
             res.setIsGoodVariable(False)
@@ -292,10 +291,3 @@ class WorkWithDB():
             res.setErrorMessage("Ошибка выполнения операции")
 
         return res
-
-user = {"Имя":"Полина", "Логин":"Полина","Телефон":"48152635680"}
-WorkWithDB.AddToDatabase("SAMARA", True, user)
-#WorkWithDB.AddToDatabase("SAMARA", True, user)
-#print(WorkWithDB.GetRecordOnFilter("SAMARA", user, False))
-#for x in listm:
-#    print(x)
