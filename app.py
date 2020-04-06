@@ -84,10 +84,10 @@ def new_teacher():
         res = WorkWithDB.AddToDatabase(city, True, user)
         if res.isGood == False:
             return render_template(
-                "newteacher.html", errorMessage=res.getErrorMessage()
+                "errorRegistration.html", errorMessage=res.getErrorMessage()
             )
         return render_template("login.html")
-    return render_template("newteacher.html", errorMessage="")
+    return render_template("newteacher.html")
 
 
 @app.route("/favicon.ico")
