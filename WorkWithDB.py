@@ -36,7 +36,7 @@ class WorkWithDB():
             client = MongoClient()
             db = client['UsersDB']            
 
-            if(WorkWithDB.CheckUserTelephone(user) and WorkWithDB.CheckUserLogin(user)):
+            if(WorkWithDB.CheckUserTelephone(user).isGood and WorkWithDB.CheckUserLogin(user).isGood):
 
                 if isTeacher:
                     nameCollect = city+'teachers'
@@ -60,7 +60,7 @@ class WorkWithDB():
                 res.setIsGoodVariable(False)            
 
             if(res.isGood==False):
-                res.setErrorMessage("Пользователь с таким логином/паролем уже существует.")
+                res.setErrorMessage("Пользователь с таким логином/номером телефона уже существует.")
             else:
                 res.setIsGoodVariable(True)
                 res.setErrorMessage("Регистрация выполнена!")

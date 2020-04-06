@@ -74,6 +74,11 @@ hr {
   opacity: 0.9;
 }
 
+.errorBlock {
+    color: red;
+    text-align: center;
+}
+
 .registerbtn:hover {
   opacity:1;
 }

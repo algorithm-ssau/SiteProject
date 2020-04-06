@@ -1,24 +1,32 @@
 import os
-from flask import Flask, render_template, send_from_directory, redirect, url_for, request
-from WorkWithDB import WorkWithDB
+from flask import (
+    Flask,
+    render_template,
+    send_from_directory,
+    redirect,
+    url_for,
+    request,
+)
+from WorkWithDB import WorkWithDB, Result
 
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route("/")
 def login():
     return render_template("login.html")
-    
-@app.route('/newteacher', methods=['post', 'get'])
+
+
+@app.route("/newteacher", methods=["post", "get"])
 def new_teacher():
-    if request.method == 'POST':
+    if request.method == "POST":
         city = request.form.get("cities")
         user = {"Город": city}
         user.update({"Фамилия": request.form.get("LastName")})
         user.update({"Имя": request.form.get("FirstName")})
         birthday = request.form.get("date")
         birthdayInfo = birthday.split("-")
-        birthday = birthdayInfo[2] + '.' + birthdayInfo[1] + '.' + birthdayInfo[0]
+        birthday = birthdayInfo[2] + "." + birthdayInfo[1] + "." + birthdayInfo[0]
         user.update({"День_рождения": birthday})
         workform = []
         if request.form.get("option1") == "a1":
@@ -73,13 +81,19 @@ def new_teacher():
         if request.form.get("usual") == "c4":
             typesOfLessons.append("Обычные")
         user.update({"Вид_занятий": typesOfLessons})
-        WorkWithDB.AddToDatabase(city, True, user)
-    return render_template("newteacher.html")
-    
-@app.route('/favicon.ico')
-def fav():
-    return redirect(url_for('static', filename='favicon.ico'), code=302)
-    
+        res = WorkWithDB.AddToDatabase(city, True, user)
+        if res.isGood == False:
+            return render_template(
+                "newteacher.html", errorMessage=res.getErrorMessage()
+            )
+        return render_template("login.html")
+    return render_template("newteacher.html", errorMessage="")
 
-if __name__ == '__main__':
+
+@app.route("/favicon.ico")
+def fav():
+    return redirect(url_for("static", filename="favicon.ico"), code=302)
+
+
+if __name__ == "__main__":
     app.run()
