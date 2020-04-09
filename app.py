@@ -15,6 +15,10 @@ app = Flask(__name__)
 @app.route("/")
 def login():
     return render_template("login.html")
+    
+@app.route("/newstudent")
+def new_student():
+    return render_template("newstudent.html")
 
 
 @app.route("/newteacher", methods=["post", "get"])
