@@ -16,8 +16,64 @@ app = Flask(__name__)
 def login():
     return render_template("login.html")
     
-@app.route("/newstudent")
+@app.route("/newstudent", methods=["post", "get"])
 def new_student():
+    if request.method == "POST":
+        city = request.form.get("cities")
+        user = {"Город": city}
+        user.update({"Фамилия": request.form.get("LastName")})
+        user.update({"Имя": request.form.get("FirstName")})
+        birthday = request.form.get("date")
+        birthdayInfo = birthday.split("-")
+        birthday = birthdayInfo[2] + "." + birthdayInfo[1] + "." + birthdayInfo[0]
+        user.update({"День_рождения": birthday})
+        user.update({"Класс": request.form.get("class")})
+        workform = []
+        if request.form.get("option1") == "a1":
+            workform.append("Еду_к_преподавателю")
+        if request.form.get("option2") == "a2":
+            workform.append("Преподаватель_ко_мне")
+        if request.form.get("option3") == "a3":
+            workform.append("Дистанционно")
+        user.update({"Формат_занятий": workform})
+        user.update({"Пол": request.form.get("sex")})
+        user.update({"Телефон": request.form.get("phone")})
+        user.update({"Логин": request.form.get("login")})
+        user.update({"Пароль": request.form.get("psw")})
+        lessons = []
+        if request.form.get("math") == "b1":
+            lessons.append("Математика")
+        if request.form.get("rus") == "b2":
+            lessons.append("Русский_язык")
+        if request.form.get("phys") == "b3":
+            lessons.append("Физика")
+        if request.form.get("inf") == "b4":
+            lessons.append("Информатика")
+        if request.form.get("chemistry") == "b5":
+            lessons.append("Химия")
+        if request.form.get("bio") == "b6":
+            lessons.append("Биология")
+        if request.form.get("history") == "b7":
+            lessons.append("История")
+        if request.form.get("social") == "b8":
+            lessons.append("Обществознание")
+        if request.form.get("literature") == "b9":
+            lessons.append("Литература")
+        if request.form.get("geo") == "b10":
+            lessons.append("География")
+        if request.form.get("economy") == "b11":
+            lessons.append("Экономика")
+        if request.form.get("eng") == "b12":
+            lessons.append("Английский_язык")
+        if request.form.get("dutch") == "b13":
+            lessons.append("Немецкий_язык")
+        user.update({"Изучаемые_предметы": lessons})
+        res = WorkWithDB.AddToDatabase(city, False, user)
+        if res.isGood == False:
+            return render_template(
+                "errorRegistration.html", errorMessage=res.getErrorMessage()
+            )
+        return redirect("/")
     return render_template("newstudent.html")
 
 
@@ -90,7 +146,7 @@ def new_teacher():
             return render_template(
                 "errorRegistration.html", errorMessage=res.getErrorMessage()
             )
-        return render_template("login.html")
+        return redirect("/")
     return render_template("newteacher.html")
 
 
