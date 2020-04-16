@@ -2,7 +2,6 @@ import os
 from flask import (
     Flask,
     render_template,
-    send_from_directory,
     redirect,
     url_for,
     request,
@@ -35,7 +34,15 @@ def new_student():
             workform.append("Преподаватель_ко_мне")
         if request.form.get("option3") == "a3":
             workform.append("Дистанционно")
+        if len(workform) == 0:
+            return render_template(
+                "errorRegistration.html", errorMessage="Необходимо выбрать хоть 1 вариант формата занятий!"
+            )
         user.update({"Формат_занятий": workform})
+        if request.form.get("sex") == None:
+            return render_template(
+                "errorRegistration.html", errorMessage="Необходимо выбрать пол!"
+            )
         user.update({"Пол": request.form.get("sex")})
         user.update({"Телефон": request.form.get("phone")})
         user.update({"Логин": request.form.get("login")})
@@ -67,6 +74,10 @@ def new_student():
             lessons.append("Английский_язык")
         if request.form.get("dutch") == "b13":
             lessons.append("Немецкий_язык")
+        if len(lessons) == 0:
+            return render_template(
+                "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы 1 изучаемый предмет!"
+            )
         user.update({"Изучаемые_предметы": lessons})
         res = WorkWithDB.AddToDatabase(city, False, user)
         if res.isGood == False:
@@ -95,9 +106,17 @@ def new_teacher():
             workform.append("Ученик_ко_мне")
         if request.form.get("option3") == "a3":
             workform.append("Дистанционно")
+        if len(workform) == 0:
+            return render_template(
+                "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы 1 вариант формата занятий!"
+            )
         user.update({"Формат_занятий": workform})
         user.update({"Образование": request.form.get("education")})
         user.update({"Стаж_преподавания_в_годах": request.form.get("experience")})
+        if request.form.get("sex") == None:
+            return render_template(
+                "errorRegistration.html", errorMessage="Необходимо выбрать пол!"
+            )
         user.update({"Пол": request.form.get("sex")})
         user.update({"Телефон": request.form.get("phone")})
         user.update({"Логин": request.form.get("login")})
@@ -129,6 +148,10 @@ def new_teacher():
             lessons.append("Английский_язык")
         if request.form.get("dutch") == "b13":
             lessons.append("Немецкий_язык")
+        if len(lessons) == 0:
+            return render_template(
+                "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы один преподаваемый предмет!"
+            )
         user.update({"Преподаваемые_предметы": lessons})
         user.update({"Ставка_в_час": request.form.get("rate")})
         typesOfLessons = []
@@ -140,6 +163,10 @@ def new_teacher():
             typesOfLessons.append("Помощь_с_домашкой")
         if request.form.get("usual") == "c4":
             typesOfLessons.append("Обычные")
+        if len(typesOfLessons) == 0:
+            return render_template(
+                "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы один вариант вида занятий!"
+            )
         user.update({"Вид_занятий": typesOfLessons})
         res = WorkWithDB.AddToDatabase(city, True, user)
         if res.isGood == False:
@@ -157,3 +184,5 @@ def fav():
 
 if __name__ == "__main__":
     app.run()
+    #from waitress import serve
+    #serve(app, host="0.0.0.0", port=8080)
