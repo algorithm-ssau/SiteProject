@@ -27,6 +27,20 @@ class Result():
 class WorkWithDB():
     ''''Класс результата операции. Сюда заносить isGood = true, если всё хорошо
     и обе переменные, если есть косяки и операция не получилась'''
+
+    ''''установка в отдельную соллекцию'''
+    @staticmethod
+    def getLastID():
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+            collect = db['ID']
+
+
+        except:
+            print("упс")
+
+
     @staticmethod
     def AddToDatabase(city, isTeacher, user):
         res = Result(True, "",[])
@@ -299,3 +313,6 @@ class WorkWithDB():
             res.setErrorMessage("Ошибка выполнения операции")
 
         return res
+
+
+WorkWithDB.getLastID()
