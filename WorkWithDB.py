@@ -30,15 +30,24 @@ class WorkWithDB():
 
     ''''установка в отдельную соллекцию'''
     @staticmethod
-    def getLastID():
+    def getNewID():
         try:
+            newID = 0
             client = MongoClient()
             db = client['UsersDB']
             collect = db['ID']
-
+            
+            if collect.estimated_document_count()==0:
+                collect.insert_one({'ID':0})
+                newID=0
+            else:
+                newID = int(collect.find().sort('ID', -1)[0].get('ID'))+1
+                collect.update_one({'ID':int(newID-1)},{'$set' : {'ID': newID}})
 
         except:
             print("упс")
+
+        return newID
 
 
     @staticmethod
@@ -55,6 +64,8 @@ class WorkWithDB():
 
             if(resCheckTelephone.isGood and resCheckLogin.isGood):
 
+                user['ID'] = int(WorkWithDB.getNewID())
+
                 if isTeacher:
                     nameCollect = city+'teachers'
                     collect = db[nameCollect]
@@ -62,7 +73,7 @@ class WorkWithDB():
                 else:
                     nameCollect = city+'students'
                     collect = db[nameCollect]
-                    collect.insert_one(user)
+                    collect.insert_one(user)                
 
                 number = user.get("Телефон")
                 doc ={"Телефон": str(number)}
@@ -314,5 +325,3 @@ class WorkWithDB():
 
         return res
 
-
-WorkWithDB.getLastID()
