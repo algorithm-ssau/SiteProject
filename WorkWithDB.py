@@ -325,3 +325,41 @@ class WorkWithDB():
 
         return res
 
+    @staticmethod
+    def createNewDialog(IDuser1, IDuser2):
+        try:
+            listID = [IDuser1, IDuser2]
+            listID.sort()
+            client = MongoClient()
+            db = client['UsersDB']
+            nameCollect = str(listID[0])+'and'+str(listID[1])
+            db.create_collection(nameCollect)
+            print('yes')
+        except:
+            print('no')
+
+    @staticmethod
+    def sendMessege(IDuser1, IDuser2, messege):
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+            listID = [IDuser1, IDuser2]
+            listID.sort()
+            nameCollect = str(listID[0])+'and'+str(listID[1])
+            try:
+                collect = db[nameCollect]
+                collect.insert_one({'Сообщение':messege})
+            except:
+                WorkWithDB.createNewDialog(IDuser1, IDuser2)
+                collect = db[nameCollect]
+                collect.insert_one({'Сообщение':messege})
+        except:
+            print('Ошибка подключения к БД')
+
+
+
+        
+
+#user ={'имя':'Поля','Телефон':'15648794500','Логин':'рол0','Город':'SAMARA'}
+#WorkWithDB.AddToDatabase('SAMARA', False, user)    
+WorkWithDB.sendMessege(6,4,'Привет, Сеня!')    
