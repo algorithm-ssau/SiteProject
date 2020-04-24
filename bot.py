@@ -22,7 +22,13 @@ class messageBot():
 
     @staticmethod
     def creator():
-        print('creator')
+        message = 'Лови! https://vk.com/spolik3 , https://vk.com/yt_clame , https://vk.com/naek__ek \nОни будут рады пообщаться с тобой!\nДля возвращения в меню напиши : Меню'
+        
+    @staticmethod
+    def Next(menu):
+        nextPoint = {'Меню': messageBot.MainMenu, 'меню': messageBot.MainMenu }
+        func = nextPoint.get(menu)
+        func()
 
     @staticmethod
     def literature():
@@ -37,4 +43,4 @@ class messageBot():
         print('math')
 
 messageBot.Welcome(5)
-messageBot.MainMenu(3)
+messageBot.MainMenu(2)
