@@ -334,32 +334,58 @@ class WorkWithDB():
             db = client['UsersDB']
             nameCollect = str(listID[0])+'and'+str(listID[1])
             db.create_collection(nameCollect)
-            print('yes')
         except:
-            print('no')
+            print('Ошибка')
 
     @staticmethod
-    def sendMessege(IDuser1, IDuser2, messege):
+    def sendMessege(IDuserFrom, IDuserTo, messege, sity):
         try:
             client = MongoClient()
             db = client['UsersDB']
-            listID = [IDuser1, IDuser2]
+            listID = [IDuserFrom, IDuserTo]
             listID.sort()
             nameCollect = str(listID[0])+'and'+str(listID[1])
+
             try:
+                userColl = db[str(sity+'teachers')]
+                nameFrom = ''
+
+                if(userColl.find_one({'ID': IDuserFrom})):
+                    doc = dict(userColl.find_one({'ID': IDuserFrom}))
+                    nameFrom = doc.get('имя')
+                else:
+                    userColl = db[str(sity+'students')]
+                    doc = dict(userColl.find_one({'ID': IDuserFrom}))
+                    nameFrom = doc.get('имя')
+                    print(nameFrom)
+
                 collect = db[nameCollect]
-                collect.insert_one({'Сообщение':messege})
+                collect.insert_one({'Сообщение':messege, 'От':nameFrom})
+
             except:
-                WorkWithDB.createNewDialog(IDuser1, IDuser2)
+                WorkWithDB.createNewDialog(IDuserFrom, IDuserTo)
+                userColl = db[str(sity+'teachers')]
+                nameFrom = ''
+
+                if(userColl.find_one({'ID': IDuserFrom})):
+                    doc = dict(userColl.find_one({'ID': IDuserFrom}))
+                    nameFrom = doc.get('имя')
+                else:
+                    userColl = db[str(sity+'students')]
+                    doc = dict(userColl.find_one({'ID': IDuserFrom}))
+                    nameFrom = doc.get('имя')
+
                 collect = db[nameCollect]
-                collect.insert_one({'Сообщение':messege})
+                collect.insert_one({'Сообщение':messege, 'От':nameFrom})
+
         except:
             print('Ошибка подключения к БД')
 
+WorkWithDB.sendMessege(5,3,'Привет!', 'SAMARA')
 
 
         
 
 #user ={'имя':'Поля','Телефон':'15648794500','Логин':'рол0','Город':'SAMARA'}
 #WorkWithDB.AddToDatabase('SAMARA', False, user)    
-WorkWithDB.sendMessege(6,4,'Привет, Сеня!')    
+#WorkWithDB.sendMessege(6,4,'Привет, Сеня!')    
