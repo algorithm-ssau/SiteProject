@@ -327,6 +327,7 @@ class WorkWithDB():
 
     @staticmethod
     def createNewDialog(IDuser1, IDuser2):
+        res = Result(False," ",[])
         try:
             listID = [IDuser1, IDuser2]
             listID.sort()
@@ -334,11 +335,16 @@ class WorkWithDB():
             db = client['UsersDB']
             nameCollect = str(listID[0])+'and'+str(listID[1])
             db.create_collection(nameCollect)
-        except:
-            print('Ошибка')
+
+        except Exception:
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
+        return res
+
 
     @staticmethod
-    def sendMessege(IDuserFrom, IDuserTo, messege, sity):
+    def sendMessege(IDuserFrom, IDuserTo, message, sity):
+        res = Result(False," ",[])
         try:
             client = MongoClient()
             db = client['UsersDB']
@@ -357,10 +363,12 @@ class WorkWithDB():
                     userColl = db[str(sity+'students')]
                     doc = dict(userColl.find_one({'ID': IDuserFrom}))
                     nameFrom = doc.get('имя')
-                    print(nameFrom)
 
                 collect = db[nameCollect]
-                collect.insert_one({'Сообщение':messege, 'От':nameFrom})
+                collect.insert_one({'Сообщение':message, 'От':nameFrom})
+
+                res.setIsGoodVariable(True)
+                res.setErrorMessage("Операция выполнена успешно.")
 
             except:
                 WorkWithDB.createNewDialog(IDuserFrom, IDuserTo)
@@ -376,16 +384,46 @@ class WorkWithDB():
                     nameFrom = doc.get('имя')
 
                 collect = db[nameCollect]
-                collect.insert_one({'Сообщение':messege, 'От':nameFrom})
+                collect.insert_one({'Сообщение':message, 'От':nameFrom})
 
-        except:
-            print('Ошибка подключения к БД')
+                res.setIsGoodVariable(True)
+                res.setErrorMessage("Операция выполнена успешно.")
 
-WorkWithDB.sendMessege(5,3,'Привет!', 'SAMARA')
+        except Exception:
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
+
+        return res
+
+    @staticmethod
+    def getMessage(count, IDuser1, IDuser2):
+        listMes = []
+        res = Result(False," ",[])
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+
+            listID = [IDuser1, IDuser2]
+            listID.sort()
+            nameCollect = str(listID[0])+'and'+str(listID[1])
+            collect = db[nameCollect]
+
+            tmp = collect.find().sort('_id' , -1).limit(int(count))
+            for message in tmp:
+                listMes.append(dict(message))
+
+            res.setIsGoodVariable(True)
+            res.setErrorMessage("Операция выполнена успешно.")
+            res.setList(listMes)    
+
+        except Exception:
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
+
+        return res
 
 
-        
 
-#user ={'имя':'Поля','Телефон':'15648794500','Логин':'рол0','Город':'SAMARA'}
-#WorkWithDB.AddToDatabase('SAMARA', False, user)    
-#WorkWithDB.sendMessege(6,4,'Привет, Сеня!')    
+#WorkWithDB.sendMessege(5,3,'Привет! Лоvь', 'SAMARA')
+WorkWithDB.getMessage(50,3,5)
+   
