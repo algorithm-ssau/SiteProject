@@ -10,7 +10,7 @@ def BotGraf(text, state):
 
     def stateA1(text):
         if text==0:
-
+            state = stateC
 
     
 
