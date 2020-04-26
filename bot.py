@@ -1,14 +1,18 @@
 from random import randint
 import WorkWithDB
-from goto import with_goto
 
-@with_goto
-def BotGraf():
-    print('пользователь')
-    id = input()
+def BotGraf(text, state):
 
-    label .A1
-    Welcome()
+    def stateA():
+        Welcome()
+        state = stateA1
+    return
+
+    def stateA1(text):
+        if text==0:
+
+
+    
 
     menu = input()
     if menu==0:
@@ -17,23 +21,24 @@ def BotGraf():
         if tmp == 'Меню':
             goto .A1
 
-    else if menu==1: #Русский и Литра
+    elif menu==1: #Русский и Литра
         message = 'О, знаю я пару полезных сайтиков:\nБесплатная литература: https://aldebaran.ru/genre/klassika/russkaya_klassika/\nБанк аргументов: https://4ege.ru/russkiy/56021-bank-argumentov.html\nВсе правила русского языка: https://best-language.ru/\nДля возвращения в меню напиши : Меню'
         tmp = input()
         if tmp == 'Меню':
             goto .A1
 
-    else if menu==2: #Математика
+    elif menu==2: #Математика
         message = 'Хорошо, сйечас посмотрим. Что тебе нужно: 0.Вся геометрия\n1.Все формулы'
         tmp = input()
         if tmp == 0:
             messege = 'Лови! https://www.webmath.ru/poleznoe/formules_19_0.php'
-        else if tmp == 1:
+        elif tmp == 1:
             #вот туть нужно передать документ
+            i=5
         else:
             message='Я не понимаю. Пока.'
 
-    else if menu==3: #информатика. тут калькулятор будет
+    elif menu==3: #информатика. тут калькулятор будет
         messege = 'Могу по переводить тебе что-нибудь.'
 
     else:
