@@ -422,8 +422,52 @@ class WorkWithDB():
 
         return res
 
+    @staticmethod
+    def createBot():
+        res = Result(False," ",[])
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+            db.create_collection('bot')
+            res.setIsGoodVariable(True)
+            res.setErrorMessage("Операция выполнена успешно.")
+        except Exception:
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
+        return res
+
+    @staticmethod
+    def stateBot(idUser, state):
+        res = Result(False," ",[])
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+
+            filter = {'id': idUser}
+            try:
+                collect = db['bot']
+                if(collect.count_documents(filter)==1):#такая запись уже есть
+                    doc = dict(collect.find_one(filter))
+                    lastState = doc.get('Состояние')
+                    collect.update_one({'Состояние': str(lastState)}, {'$set' :{'Состояние': str(state)}})
+                else:# не существует
+                    collect.insert_one({'id':idUser,'Состояние': state})
+
+            except: #не существует коллекции
+                WorkWithDB.createBot()
+                collect = db['bot']
+                collect.insert_one({'id':idUser,'Состояние': state})
+            res.setIsGoodVariable(True)
+            res.setErrorMessage("Операция выполнена успешно.")
+
+        except Exception:
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
+
+        return res
+
 
 
 #WorkWithDB.sendMessege(5,3,'Привет! Лоvь', 'SAMARA')
-WorkWithDB.getMessage(50,3,5)
+#WorkWithDB.getMessage(50,3,5)
    
