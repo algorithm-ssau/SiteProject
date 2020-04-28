@@ -11,8 +11,10 @@ from WorkWithDB import WorkWithDB, Result
 app = Flask(__name__)
 
 
-@app.route("/")
+@app.route("/", methods=["post", "get"])
 def login():
+    if request.method == "POST":
+        pass
     return render_template("login.html")
     
 @app.route("/newstudent", methods=["post", "get"])

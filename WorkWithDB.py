@@ -105,6 +105,11 @@ class WorkWithDB():
 
         return res
 
+    
+    @staticmethod
+    def FoundUserInDatabase(login, password):
+        return None
+
     @staticmethod
     def DeleteAllFromDatabase(city, filter, isTeacher):
         #Удалить все объекты, подходящие под фильтр   
