@@ -181,6 +181,10 @@ def new_teacher():
 def fav():
     return redirect(url_for("static", filename="favicon.ico"), code=302)
 
+@app.route("/profile", methods=["post", "get"])
+def profile():
+    return render_template("profile.html")
+
 
 if __name__ == "__main__":
     app.run()
