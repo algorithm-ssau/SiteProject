@@ -74,12 +74,42 @@ hr {
   opacity: 0.9;
 }
 
+.searchbtn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  margin: 1px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}
+
+.updatebtn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  margin: 1px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}
+
 .errorBlock {
     color: red;
     text-align: center;
 }
 
 .registerbtn:hover {
+  opacity:1;
+}
+
+.updatebtn:hover {
+  opacity:1;
+}
+
+.searchbtn:hover {
   opacity:1;
 }
 
@@ -214,19 +244,16 @@ body.nav_is_visible .menu {
 .content {
   position: absolute;
   margin: 0 auto;
-  padding: 30px 20%;
-  font-size: 18px;
+  padding: 30px 50%;
+  font-size: 16px;
   transform: translateX(100%);
-  transition: color 1s ease 1s, background 0.5s ease 1s, transform 1000ms cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s;
+  transition: color 1s ease 1s, transform 1000ms cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s;
 }
 
-.content  h1 {
-  font-size: 60px;
-}
-
-.content  p {
-  margin-bottom: 100px;
-  line-height: 2.4;
+.avatar {
+  position: absolute;
+  left:250px;
+  top: 60px;
 }
 
 .content .wrapper{
@@ -265,6 +292,15 @@ body.nav_is_visible .menu {
   color: #1976D2;
   background: #fff;
 }
+
+.search_tutor {
+  background: #1976D2;
+  color: #fff;
+  width: auto;
+}
+
+
+
 
 
 
