@@ -81,7 +81,8 @@ class WorkWithDB():
                 teachersNum.insert_one(doc) 
 
                 login = user.get("Логин")
-                doc_log ={"Логин": str(login)}
+                cit = user.get('Город')
+                doc_log ={"Логин": str(login), "Город": str(cit)}
                 usersLogin = db.Login
                 usersLogin.insert_one(doc_log)            
             else:
@@ -108,7 +109,43 @@ class WorkWithDB():
     
     @staticmethod
     def FoundUserInDatabase(login, password):
-        return None
+        res = Result(False, ' ',[]) 
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+            usersLogin = db.Login
+
+            doc = {'Логин': str(login)}
+            filter = {'Логин': str(login), 'Пароль': str(password)}
+
+            if(usersLogin.count_documents(doc)==1):
+                docUser = dict(usersLogin.find_one(doc))
+                city = docUser.get('Город')
+                
+                nameCollect = str(city +'teachers')
+                collect = db[nameCollect] 
+                if(collect.count_documents(filter))==1:
+                    res.setIsGoodVariable(True)
+                    res.setErrorMessage('Пользователь существует.')
+                else:
+                    nameCollect = str(city +'students')
+                    collect = db[nameCollect] 
+                    if(collect.count_documents(filter)==1):
+                        res.setIsGoodVariable(True)
+                        res.setErrorMessage('Пользователь существует.')
+                    else:
+                        res.setIsGoodVariable(False)
+                        res.setErrorMessage('Пользователь не существует.')
+
+            else:
+                res.setIsGoodVariable(False)
+                res.setErrorMessage('Пользователь не существует.')            
+
+        except Exception:
+            res.setIsGoodVariable(False)
+            res.setErrorMessage('Ошибка!')
+
+        return res
 
     @staticmethod
     def DeleteAllFromDatabase(city, filter, isTeacher):
@@ -473,6 +510,5 @@ class WorkWithDB():
 
 
 
-#WorkWithDB.sendMessege(5,3,'Привет! Лоvь', 'SAMARA')
-#WorkWithDB.getMessage(50,3,5)
+
    
