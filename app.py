@@ -1,4 +1,4 @@
-import os
+import os, hashlib
 from flask import (
     Flask,
     render_template,
@@ -14,6 +14,9 @@ app = Flask(__name__)
 
 @app.route("/", methods=["post", "get"])
 def login():
+    token = request.cookies.get('token')
+    if token != None:
+        return redirect("/profile")
     if request.method == "POST":
         login = request.form.get("email")
         password = request.form.get("psw")
@@ -21,7 +24,7 @@ def login():
         if user == None:
             return render_template("errorRegistration.html", errorMessage="Пользователь не существует!")
         resp = make_response(redirect("/profile"))
-        resp.set_cookie('asd', 'asd')
+        resp.set_cookie('token', user['Токен'], max_age=60*60*24*365*2)
         return resp
     return render_template("login.html")
     
@@ -94,7 +97,9 @@ def new_student():
             return render_template(
                 "errorRegistration.html", errorMessage=res.getErrorMessage()
             )
-        return redirect("/")
+        resp = make_response(redirect("/"))
+        resp.set_cookie('token', res.getErrorMessage(), max_age=60*60*24*365*2)
+        return resp
     return render_template("newstudent.html")
 
 
@@ -183,7 +188,9 @@ def new_teacher():
             return render_template(
                 "errorRegistration.html", errorMessage=res.getErrorMessage()
             )
-        return redirect("/")
+        resp = make_response(redirect("/"))
+        resp.set_cookie('token', res.getErrorMessage(), max_age=60*60*24*365*2)
+        return resp
     return render_template("newteacher.html")
 
 
@@ -193,8 +200,15 @@ def fav():
 
 @app.route("/profile", methods=["post", "get"])
 def profile():
-    var = request.cookies.get('asd')
-    return render_template("profile.html")
+    user = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
+    if user == None:
+        resp = make_response(redirect("/"))
+        resp.set_cookie('token', '', expires = 0)
+        return resp
+    if user['Роль'] == 'Репетитор':
+        return render_template("tutorprofile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = user['Стаж_преподавания_в_годах'], Phone = user['Телефон'], About = user['О_себе'])
+    else:
+        return None
 
 
 if __name__ == "__main__":

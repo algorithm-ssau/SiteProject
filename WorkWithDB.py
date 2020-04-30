@@ -1,4 +1,4 @@
-import pymongo
+import pymongo, hashlib
 from pymongo import MongoClient
 import traceback
 
@@ -49,6 +49,36 @@ class WorkWithDB():
 
         return newID
 
+    @staticmethod
+    def getNewToken(user, isTeacher):
+        try:
+            count = 0
+            while True:
+                tokenSTR = str(user['Логин']) + str(user['Пароль']) + str(user['ID']) + str(user['День_рождения']) + str(count)
+                hash_object = hashlib.sha512(tokenSTR.encode())
+                hex_dig = hash_object.hexdigest()
+                client = MongoClient()
+                db = client['UsersDB']
+                collect = db['Tokens']
+                findRes = collect.find_one({'Токен': hex_dig})
+                if findRes != None:
+                    count += 1
+                    continue
+                TokenInfo = {}
+                TokenInfo['Токен'] = hex_dig
+                TokenInfo['Город'] = user['Город']
+                if isTeacher:
+                    TokenInfo['Роль'] = 'Репетитор'
+                else:
+                    TokenInfo['Роль'] = 'Ученик'
+                TokenInfo['ID'] = user['ID']
+                collect.insert_one(TokenInfo)
+                return hex_dig
+        except:
+            print("упс")
+
+        return None
+
 
     @staticmethod
     def AddToDatabase(city, isTeacher, user):
@@ -67,11 +97,16 @@ class WorkWithDB():
                 user['ID'] = int(WorkWithDB.getNewID())
                 nameCollect = ''
 
+                user['Токен'] = WorkWithDB.getNewToken(user, isTeacher)
+                user['О_себе'] = ''
+
                 if isTeacher:
+                    user['Роль'] = 'Репетитор'
                     nameCollect = city+'teachers'
                     collect = db[nameCollect]
                     collect.insert_one(user)
                 else:
+                    user['Роль'] = 'Ученик'
                     nameCollect = city+'students'
                     collect = db[nameCollect]
                     collect.insert_one(user)                
@@ -97,7 +132,7 @@ class WorkWithDB():
                     res.setErrorMessage("Пользователь с таким логином уже существует.")
             else:
                 res.setIsGoodVariable(True)
-                res.setErrorMessage("Регистрация выполнена!")
+                res.setErrorMessage(user['Токен'])
 
 
         except Exception :
@@ -134,6 +169,27 @@ class WorkWithDB():
             return None
 
         return None
+
+    @staticmethod
+    def FoundUserInDatabaseForToken(token):
+        try:
+            if token == '' or token == None:
+                return None
+            client = MongoClient()
+            db = client['UsersDB']
+            collectToken = db['Tokens']
+            tokenInfo = collectToken.find_one({'Токен': token})
+            nameCollect = tokenInfo['Город']
+            if tokenInfo['Роль'] == 'Репетитор':
+                nameCollect += 'teachers'
+            else:
+                nameCollect += 'students'
+            collect = db[nameCollect]
+            return collect.find_one({'ID': tokenInfo['ID']})        
+
+        except Exception:
+            return None
+
 
     @staticmethod
     def DeleteAllFromDatabase(city, filter, isTeacher):
