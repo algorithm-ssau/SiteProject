@@ -5,6 +5,7 @@ from flask import (
     redirect,
     url_for,
     request,
+    make_response,
 )
 from WorkWithDB import WorkWithDB, Result
 
@@ -14,7 +15,14 @@ app = Flask(__name__)
 @app.route("/", methods=["post", "get"])
 def login():
     if request.method == "POST":
-        pass
+        login = request.form.get("email")
+        password = request.form.get("psw")
+        user = WorkWithDB.FoundUserInDatabase(login, password)
+        if user == None:
+            return render_template("errorRegistration.html", errorMessage="Пользователь не существует!")
+        resp = make_response(redirect("/profile"))
+        resp.set_cookie('asd', 'asd')
+        return resp
     return render_template("login.html")
     
 @app.route("/newstudent", methods=["post", "get"])
@@ -185,6 +193,7 @@ def fav():
 
 @app.route("/profile", methods=["post", "get"])
 def profile():
+    var = request.cookies.get('asd')
     return render_template("profile.html")
 
 
