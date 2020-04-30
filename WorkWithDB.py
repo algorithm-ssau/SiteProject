@@ -65,6 +65,7 @@ class WorkWithDB():
             if(resCheckTelephone.isGood and resCheckLogin.isGood):
 
                 user['ID'] = int(WorkWithDB.getNewID())
+                nameCollect = ''
 
                 if isTeacher:
                     nameCollect = city+'teachers'
@@ -81,8 +82,7 @@ class WorkWithDB():
                 teachersNum.insert_one(doc) 
 
                 login = user.get("Логин")
-                cit = user.get('Город')
-                doc_log ={"Логин": str(login), "Город": str(cit)}
+                doc_log ={"Логин": str(login), "Коллекция": str(nameCollect)}
                 usersLogin = db.Login
                 usersLogin.insert_one(doc_log)            
             else:
@@ -119,19 +119,13 @@ class WorkWithDB():
 
             if(usersLogin.count_documents(doc)==1):
                 docUser = dict(usersLogin.find_one(doc))
-                city = docUser.get('Город')
-                
-                nameCollect = str(city +'teachers')
+                nameCollect = docUser.get('Коллекция')                
+               
                 collect = db[nameCollect] 
                 if(collect.count_documents(filter))==1:
                     return dict(collect.find_one(filter))
                 else:
-                    nameCollect = str(city +'students')
-                    collect = db[nameCollect] 
-                    if(collect.count_documents(filter)==1):
-                        return dict(collect.find_one(filter))
-                    else:
-                        return None
+                    return None
 
             else:
                 return None           
@@ -306,7 +300,7 @@ class WorkWithDB():
 
             if(collect.count_documents(filter)==1):
                 doc = dict(collect.find_one(filter))
-                idUser = doc.get("id")
+                idUser = doc.get("ID")
                 res.setIsGoodVariable(True)
                 res.setErrorMessage(idUser)  
 
@@ -394,11 +388,11 @@ class WorkWithDB():
 
                 if(userColl.find_one({'ID': IDuserFrom})):
                     doc = dict(userColl.find_one({'ID': IDuserFrom}))
-                    nameFrom = doc.get('имя')
+                    nameFrom = doc.get('Имя')
                 else:
                     userColl = db[str(sity+'students')]
                     doc = dict(userColl.find_one({'ID': IDuserFrom}))
-                    nameFrom = doc.get('имя')
+                    nameFrom = doc.get('Имя')
 
                 collect = db[nameCollect]
                 collect.insert_one({'Сообщение':message, 'От':nameFrom})
@@ -413,11 +407,11 @@ class WorkWithDB():
 
                 if(userColl.find_one({'ID': IDuserFrom})):
                     doc = dict(userColl.find_one({'ID': IDuserFrom}))
-                    nameFrom = doc.get('имя')
+                    nameFrom = doc.get('Имя')
                 else:
                     userColl = db[str(sity+'students')]
                     doc = dict(userColl.find_one({'ID': IDuserFrom}))
-                    nameFrom = doc.get('имя')
+                    nameFrom = doc.get('Имя')
 
                 collect = db[nameCollect]
                 collect.insert_one({'Сообщение':message, 'От':nameFrom})
@@ -479,7 +473,7 @@ class WorkWithDB():
             client = MongoClient()
             db = client['UsersDB']
 
-            filter = {'id': idUser}
+            filter = {'ID': idUser}
             try:
                 collect = db['bot']
                 if(collect.count_documents(filter)==1):#такая запись уже есть
@@ -487,12 +481,12 @@ class WorkWithDB():
                     lastState = doc.get('Состояние')
                     collect.update_one({'Состояние': str(lastState)}, {'$set' :{'Состояние': str(state)}})
                 else:# не существует
-                    collect.insert_one({'id':idUser,'Состояние': state})
+                    collect.insert_one({'ID':idUser,'Состояние': state})
 
             except: #не существует коллекции
                 WorkWithDB.createBot()
                 collect = db['bot']
-                collect.insert_one({'id':idUser,'Состояние': state})
+                collect.insert_one({'ID':idUser,'Состояние': state})
             res.setIsGoodVariable(True)
             res.setErrorMessage("Операция выполнена успешно.")
 
@@ -501,8 +495,3 @@ class WorkWithDB():
             res.setErrorMessage("Ошибка выполнения операции.")
 
         return res
-
-
-
-
-   
