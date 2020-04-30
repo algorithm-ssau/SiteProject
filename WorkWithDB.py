@@ -100,6 +100,10 @@ class WorkWithDB():
                 user['Токен'] = WorkWithDB.getNewToken(user, isTeacher)
                 user['О_себе'] = ''
 
+                passwordReal = user['Пароль']
+                hash_object = hashlib.sha512(passwordReal.encode())
+                user['Пароль'] = hash_object.hexdigest()
+
                 if isTeacher:
                     user['Роль'] = 'Репетитор'
                     nameCollect = city+'teachers'
@@ -148,6 +152,9 @@ class WorkWithDB():
             client = MongoClient()
             db = client['UsersDB']
             usersLogin = db.Login
+
+            hash_object = hashlib.sha512(password.encode())
+            password = hash_object.hexdigest()
 
             doc = {'Логин': str(login)}
             filter = {'Логин': str(login), 'Пароль': str(password)}

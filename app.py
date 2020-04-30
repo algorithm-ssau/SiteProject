@@ -6,6 +6,7 @@ from flask import (
     url_for,
     request,
     make_response,
+    Markup,
 )
 from WorkWithDB import WorkWithDB, Result
 
@@ -22,7 +23,7 @@ def login():
         password = request.form.get("psw")
         user = WorkWithDB.FoundUserInDatabase(login, password)
         if user == None:
-            return render_template("errorRegistration.html", errorMessage="Пользователь не существует!")
+            return render_template("errorRegistration.html", errorMessage="Ошибка входа!")
         resp = make_response(redirect("/profile"))
         resp.set_cookie('token', user['Токен'], max_age=60*60*24*365*2)
         return resp
@@ -42,9 +43,9 @@ def new_student():
         user.update({"Класс": request.form.get("class")})
         workform = []
         if request.form.get("option1") == "a1":
-            workform.append("Еду_к_преподавателю")
+            workform.append("Еду к преподавателю")
         if request.form.get("option2") == "a2":
-            workform.append("Преподаватель_ко_мне")
+            workform.append("Преподаватель ко мне")
         if request.form.get("option3") == "a3":
             workform.append("Дистанционно")
         if len(workform) == 0:
@@ -64,7 +65,7 @@ def new_student():
         if request.form.get("math") == "b1":
             lessons.append("Математика")
         if request.form.get("rus") == "b2":
-            lessons.append("Русский_язык")
+            lessons.append("Русский язык")
         if request.form.get("phys") == "b3":
             lessons.append("Физика")
         if request.form.get("inf") == "b4":
@@ -84,9 +85,9 @@ def new_student():
         if request.form.get("economy") == "b11":
             lessons.append("Экономика")
         if request.form.get("eng") == "b12":
-            lessons.append("Английский_язык")
+            lessons.append("Английский язык")
         if request.form.get("dutch") == "b13":
-            lessons.append("Немецкий_язык")
+            lessons.append("Немецкий язык")
         if len(lessons) == 0:
             return render_template(
                 "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы 1 изучаемый предмет!"
@@ -116,9 +117,9 @@ def new_teacher():
         user.update({"День_рождения": birthday})
         workform = []
         if request.form.get("option1") == "a1":
-            workform.append("Еду_к_ученику")
+            workform.append("Еду к ученику")
         if request.form.get("option2") == "a2":
-            workform.append("Ученик_ко_мне")
+            workform.append("Ученик ко мне")
         if request.form.get("option3") == "a3":
             workform.append("Дистанционно")
         if len(workform) == 0:
@@ -140,7 +141,7 @@ def new_teacher():
         if request.form.get("math") == "b1":
             lessons.append("Математика")
         if request.form.get("rus") == "b2":
-            lessons.append("Русский_язык")
+            lessons.append("Русский язык")
         if request.form.get("phys") == "b3":
             lessons.append("Физика")
         if request.form.get("inf") == "b4":
@@ -160,9 +161,9 @@ def new_teacher():
         if request.form.get("economy") == "b11":
             lessons.append("Экономика")
         if request.form.get("eng") == "b12":
-            lessons.append("Английский_язык")
+            lessons.append("Английский язык")
         if request.form.get("dutch") == "b13":
-            lessons.append("Немецкий_язык")
+            lessons.append("Немецкий язык")
         if len(lessons) == 0:
             return render_template(
                 "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы один преподаваемый предмет!"
@@ -175,7 +176,7 @@ def new_teacher():
         if request.form.get("group") == "c2":
             typesOfLessons.append("Групповые")
         if request.form.get("home") == "c3":
-            typesOfLessons.append("Помощь_с_домашкой")
+            typesOfLessons.append("Помощь с домашкой")
         if request.form.get("usual") == "c4":
             typesOfLessons.append("Обычные")
         if len(typesOfLessons) == 0:
@@ -198,17 +199,31 @@ def new_teacher():
 def fav():
     return redirect(url_for("static", filename="favicon.ico"), code=302)
 
+@app.route("/images/<name>")
+def image(name):
+    return redirect(url_for("static", filename="ProfilesImages/"+name), code=302)
+
 @app.route("/profile", methods=["post", "get"])
 def profile():
+    photo = "https://avatars.mds.yandex.net/get-pdb/216365/cafc6922-7989-4b22-b23d-36a495ce95a0/s1200"
     user = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
     if user == None:
         resp = make_response(redirect("/"))
         resp.set_cookie('token', '', expires = 0)
         return resp
+    #photo = "/static/ProfilesImages/1.png"
     if user['Роль'] == 'Репетитор':
-        return render_template("tutorprofile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = user['Стаж_преподавания_в_годах'], Phone = user['Телефон'], About = user['О_себе'])
+        lessons = ''
+        for les in user['Преподаваемые_предметы']:
+            lessons += '<br>' + les
+        htmlLessons = Markup(lessons)
+        return render_template("tutorprofile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = user['Стаж_преподавания_в_годах'], Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Photo = photo)
     else:
-        return None
+        lessons = ''
+        for les in user['Изучаемые_предметы']:
+            lessons += '<br>' + les
+        htmlLessons = Markup(lessons)
+        return render_template("profile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], SchoolClass = user['Класс'], Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Photo = photo)
 
 
 if __name__ == "__main__":
