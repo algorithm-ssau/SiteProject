@@ -109,7 +109,6 @@ class WorkWithDB():
     
     @staticmethod
     def FoundUserInDatabase(login, password):
-        res = Result(False, ' ',[]) 
         try:
             client = MongoClient()
             db = client['UsersDB']
@@ -125,27 +124,22 @@ class WorkWithDB():
                 nameCollect = str(city +'teachers')
                 collect = db[nameCollect] 
                 if(collect.count_documents(filter))==1:
-                    res.setIsGoodVariable(True)
-                    res.setErrorMessage('Пользователь существует.')
+                    return dict(collect.find_one(filter))
                 else:
                     nameCollect = str(city +'students')
                     collect = db[nameCollect] 
                     if(collect.count_documents(filter)==1):
-                        res.setIsGoodVariable(True)
-                        res.setErrorMessage('Пользователь существует.')
+                        return dict(collect.find_one(filter))
                     else:
-                        res.setIsGoodVariable(False)
-                        res.setErrorMessage('Пользователь не существует.')
+                        return None
 
             else:
-                res.setIsGoodVariable(False)
-                res.setErrorMessage('Пользователь не существует.')            
+                return None           
 
         except Exception:
-            res.setIsGoodVariable(False)
-            res.setErrorMessage('Ошибка!')
+            return None
 
-        return res
+        return None
 
     @staticmethod
     def DeleteAllFromDatabase(city, filter, isTeacher):
