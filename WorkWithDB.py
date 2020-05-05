@@ -306,40 +306,45 @@ class WorkWithDB():
         return res
 
     @staticmethod
-    def ChangeRecordInDatabase( city, filter, newRecord, isTeacher):
-        # filter - полностью старая запись пользователя
-        # newRecord - полностью новая запись пользователя
+    def ChangeRecordInDatabase(token, newRecord):
         res = Result(False, "",[])
+
         try:
+            if token == '' or token == None:
+                res.setIsGoodVariable(False)
+                res.setErrorMessage("Токен пуст. Обратитесь к разработчикам!")
+                return res
             client = MongoClient()
             db = client['UsersDB']
-
-            if(isTeacher):
-                nameCollect = city+'teacher'
-                collect = db[nameCollect]               
-
+            collectToken = db['Tokens']
+            tokenInfo = collectToken.find_one({'Токен': token})
+            nameCollect = tokenInfo['Город']
+            if tokenInfo['Роль'] == 'Репетитор':
+                nameCollect += 'teachers'
             else:
-                nameCollect = city+'students'
-                collect = db[nameCollect]    
+                nameCollect += 'students'
+            collect = db[nameCollect]
+            user = collect.find_one({'ID': tokenInfo['ID']})
 
-            if (collect.count_documents(filter)==1):
-                doc = dict(collect.find_one(filter))             
-                telUser = doc.get("Телефон")
-                logUser = doc.get("Логин")
-                telUserNew = newRecord.get("Телефон")
-                logUserNew = newRecord.get("Логин")
-                telephone = db.PhoneNumber
-                login = db.Login
-                telephone.update_one({"Телефон": str(telUser)},{'$set' : {"Телефон": str(telUserNew)}})
-                login.update_one({"Логин": str(logUser)}, {'$set' :{"Логин": str(logUserNew)}})
-                collect.update_one(filter,{'$set' :newRecord})
-                res.setIsGoodVariable(True)
-                res.setErrorMessage("Успешно")
-            else:
-                res.setIsGoodVariable(False)
-                res.setErrorMessage("Много записей добходит под фильтер.")        
+            if user['Телефон'] != newRecord['Телефон']:
+                resCheckTelephone = WorkWithDB.CheckUserTelephone(newRecord)
+                if resCheckTelephone.isGood == False:
+                    res.setIsGoodVariable(False)
+                    res.setErrorMessage("Новый номер телефона уже занят!")
+                    return res
+          
+            telUser = user.get("Телефон")
+            logUser = user.get("Логин")
+            telUserNew = newRecord.get("Телефон")
+            logUserNew = newRecord.get("Логин")
+            telephone = db.PhoneNumber
+            login = db.Login
+            telephone.update_one({"Телефон": str(telUser)},{'$set' : {"Телефон": str(telUserNew)}})
+            login.update_one({"Логин": str(logUser)}, {'$set' :{"Логин": str(logUserNew)}})
+            collect.update_one(user,{'$set' :newRecord})
+            res.setIsGoodVariable(True)
+            res.setErrorMessage("Успешно")      
 
-            
         except Exception:
             res.setIsGoodVariable(False)
             res.setErrorMessage("Ошибка выполнения операции.")

@@ -4,6 +4,7 @@
     <title>Личный кабинет репетитора</title>
     <meta charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{{ url_for("static", filename="exitScript.js") }}"></script>
     <!-- <link rel="stylesheet" type="text/css" href="static\lkstyle.css"> -->
     <link rel="stylesheet" href="{{ url_for("static", filename="lkstyle.css") }}">
     <!-- <link rel="stylesheet" href="{{ url_for("static", filename="script.js") }}"> -->
@@ -21,7 +22,7 @@
     </div>
 
     <div class="exit">
-      <input type="button" value="Выход" class="exitbtn"> 
+      <input type="button" value="Выход" class="exitbtn" onclick="exitOnProfile();"> 
     </div>
 
     <div class='menu'>
@@ -54,7 +55,7 @@
         <p><b>Предметы:</b> {{Lessons}}</p>
         <p><b>Номер телефона:</b>{{Phone}}</p>
         <p><b>О себе:</b> {{About}}</p>
-        <input type="button" value="Редактировать информацию" class="updatebtn">  
+        <input type="button" value="Редактировать информацию" class="updatebtn" onClick="document.location.href = '/edit'">  
       </div>
       </div>
     </div>

@@ -41,53 +41,56 @@
     </div>
 
     <div class='content home'>
+      <form method="POST">
       <div class="avatar">
         <img id="img_avatar" width="250" height="250" src="{{Photo}}">
       </div>
       <div class="wrapper">
         <div class="info">
+          
         <label for="LastName"><b>Фамилия</b></label>
-        <input type="text" name="LastName" required>
+        <input type="text" name="LastName" value="{{LastName}}" required>
 
         <label for="FirstName"><b>Имя</b></label>
-        <input type="text" name="FirstName" required>
+        <input type="text" name="FirstName" value="{{FirstName}}" required>
 
         <label for="date"><b>Дата рождения</b></label><Br>
-        <input type="date" id="date" name="date" required>
+        <input type="date" id="date" name="date" value="{{BirthDay}}" required>
 
         <label for="education"><p><b>Образование</b></p></label>
         <select name="education" required="required">
-          <option value="Студент">Студент</option>
-          <option value="Аспирант">Аспирант</option>
-          <option value="Учитель">Учитель</option>
-          <option value="Преподаватель">Преподаватель</option>
+          <option value="Студент" {{CHECK1}}>Студент</option>
+          <option value="Аспирант" {{CHECK2}}>Аспирант</option>
+          <option value="Учитель" {{CHECK3}}>Учитель</option>
+          <option value="Преподаватель" {{CHECK4}}>Преподаватель</option>
         </select><Br><Br>
 
         <label for="experience"><b>Стаж</b></label><Br>
-        <input type="number" placeholder="Полных лет" name="experience" required><Br>
+        <input type="number" placeholder="Полных лет" name="experience" value="{{Exp}}" required><Br>
 
         <p><b>Преподаваемые предметы</b></p>
-        <input type="checkbox" name="math" value="b1"><label for="math">Математика</label><Br>
-        <input type="checkbox" name="rus" value="b2"><label for="rus">Русский язык</label><Br>
-        <input type="checkbox" name="phys" value="b3"><label for="phys">Физика</label><Br>
-        <input type="checkbox" name="inf" value="b4"><label for="inf">Информатика</label><Br>
-        <input type="checkbox" name="chemistry" value="b5"><label for="chemistry">Химия</label><Br>
-        <input type="checkbox" name="bio" value="b6"><label for="bio">Биология</label><Br>
-        <input type="checkbox" name="history" value="b7"><label for="history">История</label><Br>
-        <input type="checkbox" name="social" value="b8"><label for="social">Обществознание</label><Br>
-        <input type="checkbox" name="literature" value="b9"><label for="literature">Литература</label><Br>
-        <input type="checkbox" name="geo" value="b10"><label for="geo">География</label><Br>
-        <input type="checkbox" name="economy" value="b11"><label for="economy">Экономика</label><Br>
-        <input type="checkbox" name="eng" value="b12"><label for="eng">Английский язык</label><Br>
-        <input type="checkbox" name="dutch" value="b13"><label for="dutch">Немецкий язык</label><Br>
+        <input type="checkbox" name="math" value="b1" {{LESS1}}><label for="math">Математика</label><Br>
+        <input type="checkbox" name="rus" value="b2" {{LESS2}}><label for="rus">Русский язык</label><Br>
+        <input type="checkbox" name="phys" value="b3" {{LESS3}}><label for="phys">Физика</label><Br>
+        <input type="checkbox" name="inf" value="b4" {{LESS4}}><label for="inf">Информатика</label><Br>
+        <input type="checkbox" name="chemistry" value="b5" {{LESS5}}><label for="chemistry">Химия</label><Br>
+        <input type="checkbox" name="bio" value="b6" {{LESS6}}><label for="bio">Биология</label><Br>
+        <input type="checkbox" name="history" value="b7" {{LESS7}}><label for="history">История</label><Br>
+        <input type="checkbox" name="social" value="b8" {{LESS8}}><label for="social">Обществознание</label><Br>
+        <input type="checkbox" name="literature" value="b9" {{LESS9}}><label for="literature">Литература</label><Br>
+        <input type="checkbox" name="geo" value="b10" {{LESS10}}><label for="geo">География</label><Br>
+        <input type="checkbox" name="economy" value="b11" {{LESS11}}><label for="economy">Экономика</label><Br>
+        <input type="checkbox" name="eng" value="b12" {{LESS12}}><label for="eng">Английский язык</label><Br>
+        <input type="checkbox" name="dutch" value="b13" {{LESS13}}><label for="dutch">Немецкий язык</label><Br>
 
         <label for="phone"><p><b>Номер телефона</b></p></label>
-        <input type="tel" placeholder="В формате 89***." name="phone" pattern="[0-9]{11}" required>
+        <input type="tel" placeholder="В формате 89***." name="phone" pattern="[0-9]{11}" value="{{Phone}}" required>
 
         <label for="about"><p><b>О себе</b></p></label>
-        <textarea></textarea>
+        <textarea name="about">{{About}}</textarea>
 
-        <input type="button" value="Сохранить информацию" class="savebtn">  
+        <input type="submit" value="Сохранить информацию" class="savebtn">
+          </form>
       </div>
       </div>
     </div>
