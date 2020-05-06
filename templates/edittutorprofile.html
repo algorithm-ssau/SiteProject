@@ -83,11 +83,30 @@
         <input type="checkbox" name="eng" value="b12" {{LESS12}}><label for="eng">Английский язык</label><Br>
         <input type="checkbox" name="dutch" value="b13" {{LESS13}}><label for="dutch">Немецкий язык</label><Br>
 
+        <p><b>Формат занятий</b></p>
+        <input type="checkbox" name="option1" value="a1"><label for="option1">Я к ученику</label><Br>
+        <input type="checkbox" name="option2" value="a2"><label for="option2">Ученик ко мне</label><Br>
+        <input type="checkbox" name="option3" value="a3"><label for="option3">Удаленно</label><Br>
+
+        <p><b>Вид занятий</b></p>
+        <input type="checkbox" name="single" value="c1"><label for="single">Разовые</label><Br>
+        <input type="checkbox" name="group" value="c2"><label for="group">Групповые</label><Br>
+        <input type="checkbox" name="home" value="c3"><label for="home">Помощь с домашней работой</label><Br> 
+        <input type="checkbox" name="usual" value="c4"><label for="usual">Обычные</label><Br>
+
+        <label for="rate"><p><b>Ставка в час</b></p></label>
+        <input type="number" placeholder="Например, 350" name="rate" required>
+
         <label for="phone"><p><b>Номер телефона</b></p></label>
         <input type="tel" placeholder="В формате 89***." name="phone" pattern="[0-9]{11}" value="{{Phone}}" required>
 
+        <label for="psw"><b>Новый пароль</b></label>
+        <input type="password" name="psw">
+      
         <label for="about"><p><b>О себе</b></p></label>
         <textarea name="about">{{About}}</textarea>
+
+        <input type="submit" value="Загрузить фотографию" class="newphoto">
 
         <input type="submit" value="Сохранить информацию" class="savebtn">
           </form>
