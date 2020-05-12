@@ -4,6 +4,7 @@
     <title>Личный кабинет репетитора</title>
     <meta charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <!-- <link rel="stylesheet" type="text/css" href="static\lkstyle.css"> -->
     <link rel="stylesheet" href="{{ url_for("static", filename="lkstyle.css") }}">
     <!-- <link rel="stylesheet" href="{{ url_for("static", filename="script.js") }}"> -->
@@ -106,7 +107,14 @@
         <label for="about"><p><b>О себе</b></p></label>
         <textarea name="about">{{About}}</textarea>
 
-        <input type="submit" value="Загрузить фотографию" class="newphoto">
+          <div class="form-group">
+            <input type="file" accept="image/*,image/jpeg" name="file" id="file" class="input-file">
+            <label for="file" class="btn btn-tertiary js-labelFile">
+              <i class="icon fa fa-check"></i>
+              <span class="js-fileName">Загрузить фотографию</span> 
+            </label>
+          </div>
+        
 
         <input type="submit" value="Сохранить информацию" class="savebtn">
           </form>
