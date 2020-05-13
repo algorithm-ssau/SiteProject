@@ -11,6 +11,7 @@ from flask import (
 from WorkWithDB import WorkWithDB, Result
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = './static/ProfilesImages/'
 
 
 @app.route("/", methods=["post", "get"])
@@ -93,6 +94,7 @@ def new_student():
                 "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы 1 изучаемый предмет!"
             )
         user.update({"Изучаемые_предметы": lessons})
+        user.update({"Фотография": "Стандарт"})
         res = WorkWithDB.AddToDatabase(city, False, user)
         if res.isGood == False:
             return render_template(
@@ -184,6 +186,7 @@ def new_teacher():
                 "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы один вариант вида занятий!"
             )
         user.update({"Вид_занятий": typesOfLessons})
+        user.update({"Фотография": "Стандарт"})
         res = WorkWithDB.AddToDatabase(city, True, user)
         if res.isGood == False:
             return render_template(
@@ -205,32 +208,55 @@ def image(name):
 
 @app.route("/profile")
 def profile():
-    photo = "https://avatars.mds.yandex.net/get-pdb/216365/cafc6922-7989-4b22-b23d-36a495ce95a0/s1200"
+    photo = ""
     user = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
     if user == None:
         resp = make_response(redirect("/"))
         resp.set_cookie('token', '', expires = 0)
         return resp
-    #photo = "/static/ProfilesImages/1.png"
+    if user['Фотография'] == 'Стандарт':
+        photo = "https://avatars.mds.yandex.net/get-pdb/216365/cafc6922-7989-4b22-b23d-36a495ce95a0/s1200"
+    else:
+        photo = "/images/" + str(user['ID']) + ".png"
     if user['Роль'] == 'Репетитор':
         lessons = ''
         for les in user['Преподаваемые_предметы']:
             lessons += '<br>' + les
         htmlLessons = Markup(lessons)
-        return render_template("tutorprofile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = user['Стаж_преподавания_в_годах'], Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Photo = photo)
+        formatLessons = ''
+        for forLes in user['Формат_занятий']:
+            formatLessons += '<br>' + forLes
+        htmlFormatLessons = Markup(formatLessons)
+        viewsLessons = ''
+        for viewLes in user['Вид_занятий']:
+            viewsLessons += '<br>' + viewLes
+        htmlViewsLessons = Markup(viewsLessons)
+        return render_template("tutorprofile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = user['Стаж_преподавания_в_годах'], Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, FormatLessons = htmlFormatLessons, ViewsLessons = htmlViewsLessons, Price = user['Ставка_в_час'], Photo = photo)
     else:
         lessons = ''
         for les in user['Изучаемые_предметы']:
             lessons += '<br>' + les
         htmlLessons = Markup(lessons)
-        return render_template("profile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], SchoolClass = user['Класс'], Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Photo = photo)
+        formatLes = ''
+        for Fles in user['Формат_занятий']:
+            formatLes += '<br>' + Fles
+        htmlFormat = Markup(formatLes)
+        return render_template("profile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], SchoolClass = user['Класс'], Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Format = htmlFormat, Photo = photo)
 
 @app.route("/edit", methods=["post", "get"])
 def edit():
     user = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
-    photo = "https://avatars.mds.yandex.net/get-pdb/216365/cafc6922-7989-4b22-b23d-36a495ce95a0/s1200"
-    #photo = "/static/ProfilesImages/1.png"
+    photo = ""
+    if user['Фотография'] == 'Стандарт':
+        photo = "https://avatars.mds.yandex.net/get-pdb/216365/cafc6922-7989-4b22-b23d-36a495ce95a0/s1200"
+    else:
+        photo = "/images/" + str(user['ID']) + ".png"
     if request.method == "POST" and user['Роль'] == 'Репетитор':
+        variablePhoto = request.files['file']
+        if variablePhoto.filename != '':
+            filename = str(user['ID']) + '.png'
+            variablePhoto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            user['Фотография'] = "Загружена"
         user['Фамилия'] = request.form.get("LastName")
         user['Имя'] = request.form.get("FirstName")
         birthday = request.form.get("date")
@@ -270,6 +296,37 @@ def edit():
                 "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы один преподаваемый предмет!"
             )
         user['Преподаваемые_предметы'] = lessons
+        formatsLes = []
+        if request.form.get("option1") == "a1":
+            formatsLes.append("Еду к ученику")
+        if request.form.get("option2") == "a2":
+            formatsLes.append("Ученик ко мне")
+        if request.form.get("option3") == "a3":
+            formatsLes.append("Дистанционно")
+        if len(formatsLes) == 0:
+            return render_template(
+                "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы один формат занятий!"
+            )
+        user['Формат_занятий'] = formatsLes
+        viewsLes = []
+        if request.form.get("single") == "c1":
+            viewsLes.append("Разовые")
+        if request.form.get("group") == "c2":
+            viewsLes.append("Групповые")
+        if request.form.get("home") == "c3":
+            viewsLes.append("Помощь с домашкой")
+        if request.form.get("usual") == "c4":
+            viewsLes.append("Обычные")
+        if len(viewsLes) == 0:
+            return render_template(
+                "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы один вид занятий!"
+            )
+        user['Вид_занятий'] = viewsLes
+        user['Ставка_в_час'] = request.form.get("rate")
+        psw = request.form.get("psw")
+        if psw != '':
+            hash_object = hashlib.sha512(psw.encode())
+            user['Пароль'] = hash_object.hexdigest()
         user['Телефон'] = request.form.get("phone")
         user['О_себе'] = request.form.get("about")
         res = WorkWithDB.ChangeRecordInDatabase(user['Токен'], user)
@@ -277,6 +334,11 @@ def edit():
             return render_template("errorRegistration.html", errorMessage = res.getErrorMessage())
         return redirect("/profile")
     if request.method == "POST" and user['Роль'] == 'Ученик':
+        variablePhoto = request.files['file']
+        if variablePhoto.filename != '':
+            filename = str(user['ID']) + '.png'
+            variablePhoto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            user['Фотография'] = "Загружена"
         user['Фамилия'] = request.form.get("LastName")
         user['Имя'] = request.form.get("FirstName")
         birthday = request.form.get("date")
@@ -315,8 +377,24 @@ def edit():
                 "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы один изучаемый предмет!"
             )
         user['Изучаемые_предметы'] = lessons
+        formatLes = []
+        if request.form.get("option1") == "a1":
+            formatLes.append("Еду к преподавателю")
+        if request.form.get("option2") == "a2":
+            formatLes.append("Преподаватель ко мне")
+        if request.form.get("option3") == "a3":
+            formatLes.append("Дистанционно")
+        if len(formatLes) == 0:
+            return render_template(
+                "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы один вид формата занятий!"
+            )
+        user['Формат_занятий'] = formatLes
         user['Телефон'] = request.form.get("phone")
         user['О_себе'] = request.form.get("about")
+        psw = request.form.get("psw")
+        if psw != '':
+            hash_object = hashlib.sha512(psw.encode())
+            user['Пароль'] = hash_object.hexdigest()
         res = WorkWithDB.ChangeRecordInDatabase(user['Токен'], user)
         if res.isGood == False:
             return render_template("errorRegistration.html", errorMessage = res.getErrorMessage())
@@ -355,7 +433,16 @@ def edit():
         LessChecks[12] = "checked" if 'Немецкий язык' in user['Преподаваемые_предметы'] else ""
         birth = user['День_рождения'].split('.')
         birthInTemplate = birth[2] + "-" + birth[1] + "-" + birth[0]
-        return render_template("edittutorprofile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = birthInTemplate, CHECK1 = studCHECK, CHECK2 = aspirCHECK, CHECK3 = teacherCHECK, CHECK4 = prepodCHECK, Exp = user['Стаж_преподавания_в_годах'], LESS1 = LessChecks[0], LESS2 = LessChecks[1], LESS3 = LessChecks[2], LESS4 = LessChecks[3], LESS5 = LessChecks[4], LESS6 = LessChecks[5], LESS7 = LessChecks[6], LESS8 = LessChecks[7], LESS9 = LessChecks[8], LESS10 = LessChecks[9], LESS11 = LessChecks[10], LESS12 = LessChecks[11], LESS13 = LessChecks[12], Phone = user['Телефон'], About = user['О_себе'], Photo = photo)
+        FormatChecks = ["" for i in range(3)]
+        FormatChecks[0] = "checked" if 'Еду к ученику' in user['Формат_занятий'] else ""
+        FormatChecks[1] = "checked" if 'Ученик ко мне' in user['Формат_занятий'] else ""
+        FormatChecks[2] = "checked" if 'Дистанционно' in user['Формат_занятий'] else ""
+        ViewChecks = ["" for i in range(4)]
+        ViewChecks[0] = "checked" if 'Разовые' in user['Вид_занятий'] else ""
+        ViewChecks[1] = "checked" if 'Групповые' in user['Вид_занятий'] else ""
+        ViewChecks[2] = "checked" if 'Помощь с домашкой' in user['Вид_занятий'] else ""
+        ViewChecks[3] = "checked" if 'Обычные' in user['Вид_занятий'] else ""
+        return render_template("edittutorprofile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = birthInTemplate, CHECK1 = studCHECK, CHECK2 = aspirCHECK, CHECK3 = teacherCHECK, CHECK4 = prepodCHECK, Exp = user['Стаж_преподавания_в_годах'], LESS1 = LessChecks[0], LESS2 = LessChecks[1], LESS3 = LessChecks[2], LESS4 = LessChecks[3], LESS5 = LessChecks[4], LESS6 = LessChecks[5], LESS7 = LessChecks[6], LESS8 = LessChecks[7], LESS9 = LessChecks[8], LESS10 = LessChecks[9], LESS11 = LessChecks[10], LESS12 = LessChecks[11], LESS13 = LessChecks[12], FORM1 = FormatChecks[0], FORM2 = FormatChecks[1], FORM3 = FormatChecks[2], VIEW1 = ViewChecks[0], VIEW2 = ViewChecks[1], VIEW3 = ViewChecks[2], VIEW4 = ViewChecks[3], Price = user['Ставка_в_час'], Phone = user['Телефон'], About = user['О_себе'], Photo = photo)
     else:
         birth = user['День_рождения'].split('.')
         birthInTemplate = birth[2] + "-" + birth[1] + "-" + birth[0]
@@ -385,7 +472,11 @@ def edit():
         LessChecks[10] = "checked" if 'Экономика' in user['Изучаемые_предметы'] else ""
         LessChecks[11] = "checked" if 'Английский язык' in user['Изучаемые_предметы'] else ""
         LessChecks[12] = "checked" if 'Немецкий язык' in user['Изучаемые_предметы'] else ""
-        return render_template("editStudentProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = birthInTemplate, CHECK1 = ClassChecks[0], CHECK2 = ClassChecks[1], CHECK3 = ClassChecks[2], CHECK4 = ClassChecks[3], CHECK5 = ClassChecks[4], CHECK6 = ClassChecks[5], CHECK7 = ClassChecks[6], CHECK8 = ClassChecks[7], CHECK9 = ClassChecks[8], CHECK10 = ClassChecks[9], CHECK11 = ClassChecks[10], LESS1 = LessChecks[0], LESS2 = LessChecks[1], LESS3 = LessChecks[2], LESS4 = LessChecks[3], LESS5 = LessChecks[4], LESS6 = LessChecks[5], LESS7 = LessChecks[6], LESS8 = LessChecks[7], LESS9 = LessChecks[8], LESS10 = LessChecks[9], LESS11 = LessChecks[10], LESS12 = LessChecks[11], LESS13 = LessChecks[12], Phone = user['Телефон'], About = user['О_себе'], Photo = photo)
+        FormatChecks = ["" for i in range(3)]
+        FormatChecks[0] = "checked" if 'Еду к преподавателю' in user['Формат_занятий'] else ""
+        FormatChecks[1] = "checked" if 'Преподаватель ко мне' in user['Формат_занятий'] else ""
+        FormatChecks[2] = "checked" if 'Дистанционно' in user['Формат_занятий'] else ""
+        return render_template("editStudentProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = birthInTemplate, CHECK1 = ClassChecks[0], CHECK2 = ClassChecks[1], CHECK3 = ClassChecks[2], CHECK4 = ClassChecks[3], CHECK5 = ClassChecks[4], CHECK6 = ClassChecks[5], CHECK7 = ClassChecks[6], CHECK8 = ClassChecks[7], CHECK9 = ClassChecks[8], CHECK10 = ClassChecks[9], CHECK11 = ClassChecks[10], LESS1 = LessChecks[0], LESS2 = LessChecks[1], LESS3 = LessChecks[2], LESS4 = LessChecks[3], LESS5 = LessChecks[4], LESS6 = LessChecks[5], LESS7 = LessChecks[6], LESS8 = LessChecks[7], LESS9 = LessChecks[8], LESS10 = LessChecks[9], LESS11 = LessChecks[10], LESS12 = LessChecks[11], LESS13 = LessChecks[12], FORMAT1 = FormatChecks[0], FORMAT2 = FormatChecks[1], FORMAT3 = FormatChecks[2], Phone = user['Телефон'], About = user['О_себе'], Photo = photo)
 
 if __name__ == "__main__":
     app.run()

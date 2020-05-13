@@ -42,7 +42,7 @@
     </div>
 
     <div class='content home'>
-      <form method="POST">
+      <form method="POST" enctype=multipart/form-data>
       <div class="avatar">
         <img id="img_avatar" width="250" height="250" src="{{Photo}}">
       </div>
@@ -85,18 +85,18 @@
         <input type="checkbox" name="dutch" value="b13" {{LESS13}}><label for="dutch">Немецкий язык</label><Br>
 
         <p><b>Формат занятий</b></p>
-        <input type="checkbox" name="option1" value="a1"><label for="option1">Я к ученику</label><Br>
-        <input type="checkbox" name="option2" value="a2"><label for="option2">Ученик ко мне</label><Br>
-        <input type="checkbox" name="option3" value="a3"><label for="option3">Удаленно</label><Br>
+        <input type="checkbox" name="option1" value="a1" {{FORM1}}><label for="option1">Я к ученику</label><Br>
+        <input type="checkbox" name="option2" value="a2" {{FORM2}}><label for="option2">Ученик ко мне</label><Br>
+        <input type="checkbox" name="option3" value="a3" {{FORM3}}><label for="option3">Удаленно</label><Br>
 
         <p><b>Вид занятий</b></p>
-        <input type="checkbox" name="single" value="c1"><label for="single">Разовые</label><Br>
-        <input type="checkbox" name="group" value="c2"><label for="group">Групповые</label><Br>
-        <input type="checkbox" name="home" value="c3"><label for="home">Помощь с домашней работой</label><Br> 
-        <input type="checkbox" name="usual" value="c4"><label for="usual">Обычные</label><Br>
+        <input type="checkbox" name="single" value="c1" {{VIEW1}}><label for="single">Разовые</label><Br>
+        <input type="checkbox" name="group" value="c2" {{VIEW2}}><label for="group">Групповые</label><Br>
+        <input type="checkbox" name="home" value="c3" {{VIEW3}}><label for="home">Помощь с домашней работой</label><Br> 
+        <input type="checkbox" name="usual" value="c4" {{VIEW4}}><label for="usual">Обычные</label><Br>
 
         <label for="rate"><p><b>Ставка в час</b></p></label>
-        <input type="number" placeholder="Например, 350" name="rate" required>
+        <input type="number" placeholder="Например, 350" name="rate" value="{{Price}}" required>
 
         <label for="phone"><p><b>Номер телефона</b></p></label>
         <input type="tel" placeholder="В формате 89***." name="phone" pattern="[0-9]{11}" value="{{Phone}}" required>
