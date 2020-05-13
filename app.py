@@ -246,6 +246,10 @@ def profile():
 @app.route("/edit", methods=["post", "get"])
 def edit():
     user = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
+    if user == None:
+        resp = make_response(redirect("/"))
+        resp.set_cookie('token', '', expires = 0)
+        return resp
     photo = ""
     if user['Фотография'] == 'Стандарт':
         photo = "https://avatars.mds.yandex.net/get-pdb/216365/cafc6922-7989-4b22-b23d-36a495ce95a0/s1200"
