@@ -534,9 +534,10 @@ class WorkWithDB():
             res.setErrorMessage("Ошибка выполнения операции.")
         return res
 
+        
     @staticmethod
-    def stateBot(idUser, state):
-        res = Result(False," ",[])
+    def checkBot(idUser):
+        res =Result(False,"",[])
         try:
             client = MongoClient()
             db = client['UsersDB']
@@ -545,18 +546,62 @@ class WorkWithDB():
             try:
                 collect = db['bot']
                 if(collect.count_documents(filter)==1):#такая запись уже есть
-                    doc = dict(collect.find_one(filter))
-                    lastState = doc.get('Состояние')
-                    collect.update_one({'Состояние': str(lastState)}, {'$set' :{'Состояние': str(state)}})
-                else:# не существует
-                    collect.insert_one({'ID':idUser,'Состояние': state})
+                    res.setIsGoodVariable(True)
+                    res.setErrorMessage('Операция выполнена успешно')
+                else:
+                    collect.insert_one({'ID':idUser,'Состояние': 'start'})
+                    res.setIsGoodVariable(True)
+                    res.setErrorMessage('Операция выполнена успешно')
 
-            except: #не существует коллекции
+            except:
                 WorkWithDB.createBot()
                 collect = db['bot']
-                collect.insert_one({'ID':idUser,'Состояние': state})
+                collect.insert_one({'ID':idUser,'Состояние': 'start'})
+                res.setIsGoodVariable(True)
+                res.setErrorMessage("Операция выполнена успешно.")
+
+        except Exception:
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
+            
+        return res
+
+    @staticmethod
+    def getState(idUser):
+        res = Result(False," ",[])
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+            collect = db['bot']
+
+            filter = {'ID': idUser}
+            doc = dict(collect.find_one(filter))   
+            lastState = doc.get('Состояние')
+            res.setErrorMessage(str(lastState))
+            res.setIsGoodVariable(True)  
+        except Exception:
+            res.setIsGoodVariable(False)
+            res.setErrorMessage('Ошибка выполнения операции.')
+        return res.ErrorMessage
+
+
+    @staticmethod
+    def stateBot(idUser, state):
+        res = Result(False," ",[])
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+
+            filter = {'ID': idUser}
+            collect = db['bot']
+
+            doc = dict(collect.find_one(filter))
+            lastState = doc.get('Состояние')
+            collect.update_one({'ID':idUser, 'Состояние': str(lastState)}, {'$set' :{'ID':idUser,'Состояние': str(state)}})
+
             res.setIsGoodVariable(True)
             res.setErrorMessage("Операция выполнена успешно.")
+            
 
         except Exception:
             res.setIsGoodVariable(False)
