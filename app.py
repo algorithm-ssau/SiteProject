@@ -215,7 +215,10 @@ def profile():
         resp.set_cookie('token', '', expires = 0)
         return resp
     if user['Фотография'] == 'Стандарт':
-        photo = "https://avatars.mds.yandex.net/get-pdb/216365/cafc6922-7989-4b22-b23d-36a495ce95a0/s1200"
+        photoUrlCat = str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон']
+        hash_object = hashlib.sha512(photoUrlCat.encode())
+        photoUrlCat = hash_object.hexdigest()
+        photo = "https://robohash.org/" + photoUrlCat + ".png?set=set4"
     else:
         photo = "/images/" + str(user['ID']) + ".png"
     if user['Роль'] == 'Репетитор':
@@ -252,7 +255,10 @@ def edit():
         return resp
     photo = ""
     if user['Фотография'] == 'Стандарт':
-        photo = "https://avatars.mds.yandex.net/get-pdb/216365/cafc6922-7989-4b22-b23d-36a495ce95a0/s1200"
+        photoUrlCat = str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон']
+        hash_object = hashlib.sha512(photoUrlCat.encode())
+        photoUrlCat = hash_object.hexdigest()
+        photo = "https://robohash.org/" + photoUrlCat + ".png?set=set4"
     else:
         photo = "/images/" + str(user['ID']) + ".png"
     if request.method == "POST" and user['Роль'] == 'Репетитор':
