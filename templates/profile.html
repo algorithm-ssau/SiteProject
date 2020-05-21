@@ -61,11 +61,11 @@
     </div>
     <div class='content search'>
       <div class="wrapper">
-        <p><b>Стаж:</b><input type="number" placeholder="Полных лет" name="experience" required><Br></p>
+        <p><b>Стаж (лет):</b><input type="number" placeholder="От" name="experienceMin"><Br><input type="number" placeholder="До" name="experienceMax"><Br></p>
         <p><b>Формат:</b><br>
-          <input type="checkbox" name="option1" value="a1"><label for="option1">Я к ученику</label><Br>
-          <input type="checkbox" name="option2" value="a2"><label for="option2">Ученик ко мне</label><Br>
-          <input type="checkbox" name="option3" value="a3"><label for="option3">Удаленно</label><Br></p>
+          <input type="checkbox" name="option1" value="a1"><label for="option1">Я к репетитору</label><Br>
+          <input type="checkbox" name="option2" value="a2"><label for="option2">Репетитор ко мне</label><Br>
+          <input type="checkbox" name="option3" value="a3"><label for="option3">Дистанционно</label><Br></p>
         <p><b>Предмет:</b><br>
           <input type="checkbox" name="math" value="b1"><label for="math">Математика</label><Br>
           <input type="checkbox" name="rus" value="b2"><label for="rus">Русский язык</label><Br>
@@ -80,19 +80,17 @@
           <input type="checkbox" name="economy" value="b11"><label for="economy">Экономика</label><Br>
           <input type="checkbox" name="eng" value="b12"><label for="eng">Английский язык</label><Br>
           <input type="checkbox" name="dutch" value="b13"><label for="dutch">Немецкий язык</label><Br></p>
-        <p><b>Ставка:</b><br>
-          <input type="number" placeholder="Например, 350" name="rate" required></p>
+        <p><b>Ставка в час:</b><br>
+          <input type="number" placeholder="От" name="rateMin"><input type="number" placeholder="До" name="rateMax"></p>
         <p><b>Образование:</b><br>
-          <select name="education" required="required">
-            <option value="Студент">Студент</option>
-            <option value="Аспирант">Аспирант</option>
-            <option value="Учитель">Учитель</option>
-            <option value="Преподаватель">Преподаватель</option>
-          </select></p>
+          <input type="checkbox" name="studentcheckbox" value="b14"><label for="studentcheckbox">Студент</label><Br>
+            <input type="checkbox" name="aspirantcheckbox" value="b15"><label for="aspirantcheckbox">Аспирант</label><Br>
+            <input type="checkbox" name="teachercheckbox" value="b16"><label for="teachercheckbox">Учитель</label><Br>
+            <input type="checkbox" name="prepodcheckbox" value="b17"><label for="prepodcheckbox">Преподаватель</label><Br></p>
         <p><b>Пол:</b><br>
+          <input type="radio" name="sex" value="Любой" checked>Любой<Br>
           <input type="radio" name="sex" value="Мужской">Мужской<Br>
           <input type="radio" name="sex" value="Женский">Женский<Br></p>
-        <p><b>Возраст:</b> </p>
         <input type="button" value="Найти репетитора" class="searchbtn">
         
         <div class="search_result">

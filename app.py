@@ -1,4 +1,4 @@
-import os, hashlib
+import os, hashlib, json
 from flask import (
     Flask,
     render_template,
@@ -12,6 +12,12 @@ from WorkWithDB import WorkWithDB, Result
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './static/ProfilesImages/'
+
+@app.after_request
+def add_header(response):
+    response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
+    response.headers['Cache-Control'] = 'public, max-age=0'
+    return response
 
 
 @app.route("/", methods=["post", "get"])
@@ -41,7 +47,7 @@ def new_student():
         birthdayInfo = birthday.split("-")
         birthday = birthdayInfo[2] + "." + birthdayInfo[1] + "." + birthdayInfo[0]
         user.update({"День_рождения": birthday})
-        user.update({"Класс": request.form.get("class")})
+        user.update({"Класс": int(request.form.get("class"))})
         workform = []
         if request.form.get("option1") == "a1":
             workform.append("Еду к преподавателю")
@@ -105,7 +111,6 @@ def new_student():
         return resp
     return render_template("newstudent.html")
 
-
 @app.route("/newteacher", methods=["post", "get"])
 def new_teacher():
     if request.method == "POST":
@@ -130,7 +135,7 @@ def new_teacher():
             )
         user.update({"Формат_занятий": workform})
         user.update({"Образование": request.form.get("education")})
-        user.update({"Стаж_преподавания_в_годах": request.form.get("experience")})
+        user.update({"Стаж_преподавания_в_годах": int(request.form.get("experience"))})
         if request.form.get("sex") == None:
             return render_template(
                 "errorRegistration.html", errorMessage="Необходимо выбрать пол!"
@@ -171,7 +176,7 @@ def new_teacher():
                 "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы один преподаваемый предмет!"
             )
         user.update({"Преподаваемые_предметы": lessons})
-        user.update({"Ставка_в_час": request.form.get("rate")})
+        user.update({"Ставка_в_час": int(request.form.get("rate"))})
         typesOfLessons = []
         if request.form.get("single") == "c1":
             typesOfLessons.append("Разовые")
@@ -196,7 +201,6 @@ def new_teacher():
         resp.set_cookie('token', res.getErrorMessage(), max_age=60*60*24*365*2)
         return resp
     return render_template("newteacher.html")
-
 
 @app.route("/favicon.ico")
 def fav():
@@ -234,7 +238,7 @@ def profile():
         for viewLes in user['Вид_занятий']:
             viewsLessons += '<br>' + viewLes
         htmlViewsLessons = Markup(viewsLessons)
-        return render_template("tutorprofile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = user['Стаж_преподавания_в_годах'], Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, FormatLessons = htmlFormatLessons, ViewsLessons = htmlViewsLessons, Price = user['Ставка_в_час'], Photo = photo)
+        return render_template("tutorprofile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = str(user['Стаж_преподавания_в_годах']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, FormatLessons = htmlFormatLessons, ViewsLessons = htmlViewsLessons, Price = str(user['Ставка_в_час']), Photo = photo)
     else:
         lessons = ''
         for les in user['Изучаемые_предметы']:
@@ -244,7 +248,7 @@ def profile():
         for Fles in user['Формат_занятий']:
             formatLes += '<br>' + Fles
         htmlFormat = Markup(formatLes)
-        return render_template("profile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], SchoolClass = user['Класс'], Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Format = htmlFormat, Photo = photo)
+        return render_template("profile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], SchoolClass = str(user['Класс']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Format = htmlFormat, Photo = photo)
 
 @app.route("/edit", methods=["post", "get"])
 def edit():
@@ -273,7 +277,7 @@ def edit():
         birthdayInfo = birthday.split("-")
         user['День_рождения'] = birthdayInfo[2] + "." + birthdayInfo[1] + "." + birthdayInfo[0]
         user['Образование'] = request.form.get("education")
-        user['Стаж_преподавания_в_годах'] = request.form.get("experience")
+        user['Стаж_преподавания_в_годах'] = int(request.form.get("experience"))
         lessons = []
         if request.form.get("math") == "b1":
             lessons.append("Математика")
@@ -332,7 +336,7 @@ def edit():
                 "errorRegistration.html", errorMessage="Необходимо выбрать хотя бы один вид занятий!"
             )
         user['Вид_занятий'] = viewsLes
-        user['Ставка_в_час'] = request.form.get("rate")
+        user['Ставка_в_час'] = int(request.form.get("rate"))
         psw = request.form.get("psw")
         if psw != '':
             hash_object = hashlib.sha512(psw.encode())
@@ -354,7 +358,7 @@ def edit():
         birthday = request.form.get("date")
         birthdayInfo = birthday.split("-")
         user['День_рождения'] = birthdayInfo[2] + "." + birthdayInfo[1] + "." + birthdayInfo[0]
-        user['Класс'] = request.form.get("class")
+        user['Класс'] = int(request.form.get("class"))
         lessons = []
         if request.form.get("math") == "b1":
             lessons.append("Математика")
@@ -452,22 +456,22 @@ def edit():
         ViewChecks[1] = "checked" if 'Групповые' in user['Вид_занятий'] else ""
         ViewChecks[2] = "checked" if 'Помощь с домашкой' in user['Вид_занятий'] else ""
         ViewChecks[3] = "checked" if 'Обычные' in user['Вид_занятий'] else ""
-        return render_template("edittutorprofile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = birthInTemplate, CHECK1 = studCHECK, CHECK2 = aspirCHECK, CHECK3 = teacherCHECK, CHECK4 = prepodCHECK, Exp = user['Стаж_преподавания_в_годах'], LESS1 = LessChecks[0], LESS2 = LessChecks[1], LESS3 = LessChecks[2], LESS4 = LessChecks[3], LESS5 = LessChecks[4], LESS6 = LessChecks[5], LESS7 = LessChecks[6], LESS8 = LessChecks[7], LESS9 = LessChecks[8], LESS10 = LessChecks[9], LESS11 = LessChecks[10], LESS12 = LessChecks[11], LESS13 = LessChecks[12], FORM1 = FormatChecks[0], FORM2 = FormatChecks[1], FORM3 = FormatChecks[2], VIEW1 = ViewChecks[0], VIEW2 = ViewChecks[1], VIEW3 = ViewChecks[2], VIEW4 = ViewChecks[3], Price = user['Ставка_в_час'], Phone = user['Телефон'], About = user['О_себе'], Photo = photo)
+        return render_template("edittutorprofile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = birthInTemplate, CHECK1 = studCHECK, CHECK2 = aspirCHECK, CHECK3 = teacherCHECK, CHECK4 = prepodCHECK, Exp = str(user['Стаж_преподавания_в_годах']), LESS1 = LessChecks[0], LESS2 = LessChecks[1], LESS3 = LessChecks[2], LESS4 = LessChecks[3], LESS5 = LessChecks[4], LESS6 = LessChecks[5], LESS7 = LessChecks[6], LESS8 = LessChecks[7], LESS9 = LessChecks[8], LESS10 = LessChecks[9], LESS11 = LessChecks[10], LESS12 = LessChecks[11], LESS13 = LessChecks[12], FORM1 = FormatChecks[0], FORM2 = FormatChecks[1], FORM3 = FormatChecks[2], VIEW1 = ViewChecks[0], VIEW2 = ViewChecks[1], VIEW3 = ViewChecks[2], VIEW4 = ViewChecks[3], Price = str(user['Ставка_в_час']), Phone = user['Телефон'], About = user['О_себе'], Photo = photo)
     else:
         birth = user['День_рождения'].split('.')
         birthInTemplate = birth[2] + "-" + birth[1] + "-" + birth[0]
         ClassChecks = ["" for i in range(11)]
-        ClassChecks[0] = "selected" if user['Класс'] == "1" else ""
-        ClassChecks[1] = "selected" if user['Класс'] == "2" else ""
-        ClassChecks[2] = "selected" if user['Класс'] == "3" else ""
-        ClassChecks[3] = "selected" if user['Класс'] == "4" else ""
-        ClassChecks[4] = "selected" if user['Класс'] == "5" else ""
-        ClassChecks[5] = "selected" if user['Класс'] == "6" else ""
-        ClassChecks[6] = "selected" if user['Класс'] == "7" else ""
-        ClassChecks[7] = "selected" if user['Класс'] == "8" else ""
-        ClassChecks[8] = "selected" if user['Класс'] == "9" else ""
-        ClassChecks[9] = "selected" if user['Класс'] == "10" else ""
-        ClassChecks[10] = "selected" if user['Класс'] == "11" else ""
+        ClassChecks[0] = "selected" if user['Класс'] == 1 else ""
+        ClassChecks[1] = "selected" if user['Класс'] == 2 else ""
+        ClassChecks[2] = "selected" if user['Класс'] == 3 else ""
+        ClassChecks[3] = "selected" if user['Класс'] == 4 else ""
+        ClassChecks[4] = "selected" if user['Класс'] == 5 else ""
+        ClassChecks[5] = "selected" if user['Класс'] == 6 else ""
+        ClassChecks[6] = "selected" if user['Класс'] == 7 else ""
+        ClassChecks[7] = "selected" if user['Класс'] == 8 else ""
+        ClassChecks[8] = "selected" if user['Класс'] == 9 else ""
+        ClassChecks[9] = "selected" if user['Класс'] == 10 else ""
+        ClassChecks[10] = "selected" if user['Класс'] == 11 else ""
         LessChecks = ["" for i in range(13)]
         LessChecks[0] = "checked" if 'Математика' in user['Изучаемые_предметы'] else ""
         LessChecks[1] = "checked" if 'Русский язык' in user['Изучаемые_предметы'] else ""
@@ -487,6 +491,131 @@ def edit():
         FormatChecks[1] = "checked" if 'Преподаватель ко мне' in user['Формат_занятий'] else ""
         FormatChecks[2] = "checked" if 'Дистанционно' in user['Формат_занятий'] else ""
         return render_template("editStudentProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = birthInTemplate, CHECK1 = ClassChecks[0], CHECK2 = ClassChecks[1], CHECK3 = ClassChecks[2], CHECK4 = ClassChecks[3], CHECK5 = ClassChecks[4], CHECK6 = ClassChecks[5], CHECK7 = ClassChecks[6], CHECK8 = ClassChecks[7], CHECK9 = ClassChecks[8], CHECK10 = ClassChecks[9], CHECK11 = ClassChecks[10], LESS1 = LessChecks[0], LESS2 = LessChecks[1], LESS3 = LessChecks[2], LESS4 = LessChecks[3], LESS5 = LessChecks[4], LESS6 = LessChecks[5], LESS7 = LessChecks[6], LESS8 = LessChecks[7], LESS9 = LessChecks[8], LESS10 = LessChecks[9], LESS11 = LessChecks[10], LESS12 = LessChecks[11], LESS13 = LessChecks[12], FORMAT1 = FormatChecks[0], FORMAT2 = FormatChecks[1], FORMAT3 = FormatChecks[2], Phone = user['Телефон'], About = user['О_себе'], Photo = photo)
+
+@app.route("/api/found/teacher/")
+def foundTeacher():
+    _filter = {}
+    cityinput = request.args.get('city')
+    if cityinput == None:
+        return "arg 'city' not found!"
+    cityINT = int(cityinput)
+    city = '-'
+    if cityINT == 0:
+        city = 'SAMARA'
+    if cityINT == 1:
+        city = 'MOSCOW'
+    if cityINT == 2:
+        city = 'KAZAN'
+    if cityINT == 3:
+        city = 'KRASNOYARSK'
+    if cityINT == 4:
+        city = 'SOCHI'
+    if cityINT == 5:
+        city = 'SARANSK'
+    if city == '-':
+        return "arg 'city' have a bad code!"
+    
+    expMin = request.args.get('expmin')
+    expMax = request.args.get('expmax')
+    if expMin != None and expMax != None:
+        _filter.update({'Стаж_преподавания_в_годах': {"$gte": int(expMin), "$lte": int(expMax)}})
+    elif expMin != None:
+        _filter.update({'Стаж_преподавания_в_годах': {"$gte": int(expMin)}})
+    elif expMax != None:
+        _filter.update({'Стаж_преподавания_в_годах': {"$lte": int(expMax)}})
+    
+    stot = request.args.get('stot')
+    ttos = request.args.get('ttos')
+    distance = request.args.get('distance')
+    formatLes = []
+    if stot == '1':
+        formatLes.append("Ученик ко мне")
+    if ttos == '1':
+        formatLes.append("Еду к ученику")
+    if distance == '1':
+        formatLes.append("Дистанционно")
+    if len(formatLes) != 0:
+        _filter.update({'Формат_занятий': { "$all" : formatLes }})
+
+    math = request.args.get('math')
+    rus = request.args.get('rus')
+    phys = request.args.get('phys')
+    inf = request.args.get('inf')
+    chemistry = request.args.get('chemistry')
+    bio = request.args.get('bio')
+    history = request.args.get('history')
+    social = request.args.get('social')
+    literature = request.args.get('literature')
+    geo = request.args.get('geo')
+    economy = request.args.get('economy')
+    eng = request.args.get('eng')
+    dutch = request.args.get('dutch')
+    lessons = []
+    if math == '1':
+        lessons.append("Математика")
+    if rus == '1':
+        lessons.append("Русский язык")
+    if phys == '1':
+        lessons.append("Физика")
+    if inf == '1':
+        lessons.append("Информатика")
+    if chemistry == '1':
+        lessons.append("Химия")
+    if bio == '1':
+        lessons.append("Биология")
+    if history == '1':
+        lessons.append("История")
+    if social == '1':
+        lessons.append("Обществознание")
+    if literature == '1':
+        lessons.append("Литература")
+    if geo == '1':
+        lessons.append("География")
+    if economy == '1':
+        lessons.append("Экономика")
+    if eng == '1':
+        lessons.append("Английский язык")
+    if dutch == '1':
+        lessons.append("Немецкий язык")
+    if len(lessons) != 0:
+        _filter.update({'Преподаваемые_предметы': { "$all" : lessons }})
+    
+
+    rateMin = request.args.get('ratemin')
+    rateMax = request.args.get('ratemax')
+    if rateMin != None and rateMax != None:
+        _filter.update({'Ставка_в_час': {"$gte": int(rateMin), "$lte": int(rateMax)}})
+    elif rateMin != None:
+        _filter.update({'Ставка_в_час': {"$gte": int(rateMin)}})
+    elif rateMax != None:
+        _filter.update({'Ставка_в_час': {"$lte": int(rateMax)}})
+
+    edstudent = request.args.get('edstudent')
+    edaspir = request.args.get('edaspir')
+    edteacher = request.args.get('edteacher')
+    edprepod = request.args.get('edprepod')
+    education = []
+    if edstudent == '1':
+        education.append("Студент")
+    if edaspir == '1':
+        education.append("Аспирант")
+    if edteacher == '1':
+        education.append("Учитель")
+    if edprepod == '1':
+        education.append("Преподаватель")
+    if len(education) != 0:
+        _filter.update({'Образование': {"$in": education}})
+
+    sex = request.args.get('sex')
+    if sex == 'm':
+        _filter.update({"Пол": "Мужской"})
+    elif sex == 'w':
+        _filter.update({"Пол": "Женский"})
+
+    res = WorkWithDB.GetRecordOnFilter(city, _filter, False)
+    if res.isGood == False:
+        return 'Bad request'
+    return json.dumps(res.listRes, ensure_ascii=False)
 
 if __name__ == "__main__":
     app.run()
