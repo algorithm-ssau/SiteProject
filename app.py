@@ -219,7 +219,7 @@ def profile():
         resp.set_cookie('token', '', expires = 0)
         return resp
     if user['Фотография'] == 'Стандарт':
-        photoUrlCat = str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон']
+        photoUrlCat = str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон'] + str(user['ID']) + str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон'] + str(user['ID'])
         hash_object = hashlib.sha512(photoUrlCat.encode())
         photoUrlCat = hash_object.hexdigest()
         photo = "https://robohash.org/" + photoUrlCat + ".png?set=set4"
@@ -259,7 +259,7 @@ def edit():
         return resp
     photo = ""
     if user['Фотография'] == 'Стандарт':
-        photoUrlCat = str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон']
+        photoUrlCat = str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон'] + str(user['ID']) + str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон'] + str(user['ID'])
         hash_object = hashlib.sha512(photoUrlCat.encode())
         photoUrlCat = hash_object.hexdigest()
         photo = "https://robohash.org/" + photoUrlCat + ".png?set=set4"
@@ -613,6 +613,105 @@ def foundTeacher():
         _filter.update({"Пол": "Женский"})
 
     res = WorkWithDB.GetRecordOnFilter(city, _filter, False)
+    if res.isGood == False:
+        return 'Bad request'
+    return json.dumps(res.listRes, ensure_ascii=False)
+
+@app.route("/api/found/student/")
+def foundStudent():
+    _filter = {}
+    cityinput = request.args.get('city')
+    if cityinput == None:
+        return "arg 'city' not found!"
+    cityINT = int(cityinput)
+    city = '-'
+    if cityINT == 0:
+        city = 'SAMARA'
+    if cityINT == 1:
+        city = 'MOSCOW'
+    if cityINT == 2:
+        city = 'KAZAN'
+    if cityINT == 3:
+        city = 'KRASNOYARSK'
+    if cityINT == 4:
+        city = 'SOCHI'
+    if cityINT == 5:
+        city = 'SARANSK'
+    if city == '-':
+        return "arg 'city' have a bad code!"
+
+    classMin = request.args.get('classmin')
+    classMax = request.args.get('classmax')
+    if classMin != None and classMax != None:
+        _filter.update({'Класс': {"$gte": int(classMin), "$lte": int(classMax)}})
+    elif classMin != None:
+        _filter.update({'Класс': {"$gte": int(classMin)}})
+    elif classMax != None:
+        _filter.update({'Класс': {"$lte": int(classMax)}})
+
+    sex = request.args.get('sex')
+    if sex == 'm':
+        _filter.update({"Пол": "Мужской"})
+    elif sex == 'w':
+        _filter.update({"Пол": "Женский"})
+
+    stot = request.args.get('stot')
+    ttos = request.args.get('ttos')
+    distance = request.args.get('distance')
+    formatLes = []
+    if stot == '1':
+        formatLes.append("Еду к преподавателю")
+    if ttos == '1':
+        formatLes.append("Преподаватель ко мне")
+    if distance == '1':
+        formatLes.append("Дистанционно")
+    if len(formatLes) != 0:
+        _filter.update({'Формат_занятий': { "$all" : formatLes }})
+
+    math = request.args.get('math')
+    rus = request.args.get('rus')
+    phys = request.args.get('phys')
+    inf = request.args.get('inf')
+    chemistry = request.args.get('chemistry')
+    bio = request.args.get('bio')
+    history = request.args.get('history')
+    social = request.args.get('social')
+    literature = request.args.get('literature')
+    geo = request.args.get('geo')
+    economy = request.args.get('economy')
+    eng = request.args.get('eng')
+    dutch = request.args.get('dutch')
+    lessons = []
+    if math == '1':
+        lessons.append("Математика")
+    if rus == '1':
+        lessons.append("Русский язык")
+    if phys == '1':
+        lessons.append("Физика")
+    if inf == '1':
+        lessons.append("Информатика")
+    if chemistry == '1':
+        lessons.append("Химия")
+    if bio == '1':
+        lessons.append("Биология")
+    if history == '1':
+        lessons.append("История")
+    if social == '1':
+        lessons.append("Обществознание")
+    if literature == '1':
+        lessons.append("Литература")
+    if geo == '1':
+        lessons.append("География")
+    if economy == '1':
+        lessons.append("Экономика")
+    if eng == '1':
+        lessons.append("Английский язык")
+    if dutch == '1':
+        lessons.append("Немецкий язык")
+    if len(lessons) != 0:
+        _filter.update({'Изучаемые_предметы': { "$all" : lessons }})
+
+    res = WorkWithDB.GetRecordOnFilter(city, _filter, True)
     if res.isGood == False:
         return 'Bad request'
     return json.dumps(res.listRes, ensure_ascii=False)

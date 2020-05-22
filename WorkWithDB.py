@@ -289,7 +289,8 @@ class WorkWithDB():
             if(isTeacher):
                 nameCollect = city+'students'
                 collect = db[nameCollect]               
-
+                cursorUser = collect.find(filter, {"_id": 0, "Пароль": 0, "Токен": 0, "Логин": 0, "Роль": 0}) 
+                
             else:
                 nameCollect = city+'teachers'
                 collect = db[nameCollect]
