@@ -441,7 +441,7 @@ class WorkWithDB():
 
 
     @staticmethod
-    def sendMessege(IDuserFrom, IDuserTo, message, sity):
+    def sendMessege(IDuserFrom, IDuserTo, data, time, message, sity):
         res = Result(False," ",[])
         try:
             client = MongoClient()
@@ -463,7 +463,7 @@ class WorkWithDB():
                     nameFrom = doc.get('Имя')
 
                 collect = db[nameCollect]
-                collect.insert_one({'Сообщение':message, 'От':nameFrom})
+                collect.insert_one({'Сообщение':message, 'От':nameFrom, 'Дата':data, 'Время':time})
 
                 res.setIsGoodVariable(True)
                 res.setErrorMessage("Операция выполнена успешно.")
@@ -482,7 +482,7 @@ class WorkWithDB():
                     nameFrom = doc.get('Имя')
 
                 collect = db[nameCollect]
-                collect.insert_one({'Сообщение':message, 'От':nameFrom})
+                collect.insert_one({'Сообщение':message, 'От':nameFrom, 'Дата':data, 'Время':time})
 
                 res.setIsGoodVariable(True)
                 res.setErrorMessage("Операция выполнена успешно.")
