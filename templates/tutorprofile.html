@@ -82,9 +82,9 @@
           <input type="checkbox" name="economy" value="b11"><label for="economy">Экономика</label><Br>
           <input type="checkbox" name="eng" value="b12"><label for="eng">Английский язык</label><Br>
           <input type="checkbox" name="dutch" value="b13"><label for="dutch">Немецкий язык</label><Br></p>
-        <p><b>Класс:</b><br>
-            <select name="class" required="required">
-                <option value="1">1</option>
+        <p><b>Минимальный класс:</b><br>
+            <select name="classMin" required="required">
+                <option value="1" selected>1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
@@ -96,7 +96,22 @@
                 <option value="10">10</option>
                 <option value="11">11</option>
               </select></p>
+              <p><b>Максимальный класс:</b><br>
+                <select name="classMax" required="required">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11" selected>11</option>
+                  </select></p>
         <p><b>Пол:</b><br>
+          <input type="radio" name="sex" value="Любой" checked>Любой<Br>
           <input type="radio" name="sex" value="Мужской">Мужской<Br>
           <input type="radio" name="sex" value="Женский">Женский<Br></p>
         
