@@ -1,6 +1,7 @@
 import pymongo, hashlib
 from pymongo import MongoClient
 import traceback
+import time, requests
 
 class Result():
     
@@ -444,9 +445,10 @@ class WorkWithDB():
 
 
     @staticmethod
-    def sendMessege(IDuserFrom, IDuserTo, data, time, message, sity):
+    def sendMessege(IDuserFrom, IDuserTo, message, sity):
         res = Result(False," ",[])
         try:
+            data = time.ctime(int(requests.get("https://time100.ru/api").text))
             client = MongoClient()
             db = client['UsersDB']
             listID = [IDuserFrom, IDuserTo]
@@ -466,7 +468,7 @@ class WorkWithDB():
                     nameFrom = doc.get('Имя')
 
                 collect = db[nameCollect]
-                collect.insert_one({'Сообщение':message, 'От':nameFrom, 'Дата':data, 'Время':time})
+                collect.insert_one({'Сообщение':message, 'От':nameFrom, 'Дата и время':data})
 
                 res.setIsGoodVariable(True)
                 res.setErrorMessage("Операция выполнена успешно.")
@@ -485,7 +487,7 @@ class WorkWithDB():
                     nameFrom = doc.get('Имя')
 
                 collect = db[nameCollect]
-                collect.insert_one({'Сообщение':message, 'От':nameFrom, 'Дата':data, 'Время':time})
+                collect.insert_one({'Сообщение':message, 'От':nameFrom, 'Дата и время':data})
 
                 res.setIsGoodVariable(True)
                 res.setErrorMessage("Операция выполнена успешно.")
@@ -611,3 +613,4 @@ class WorkWithDB():
             res.setErrorMessage("Ошибка выполнения операции.")
 
         return res
+
