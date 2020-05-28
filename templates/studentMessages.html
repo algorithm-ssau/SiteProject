@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Личный кабинет ученика</title>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{{ url_for("static", filename="exitScript.js") }}"></script>
+    <link rel="stylesheet" type="text/css" href="C:\Users\Раиса\Desktop\site\static\lkstyle.css">
+    <link rel="stylesheet" type="text/css" href="C:\Users\Раиса\Desktop\site\static\msgstyle.css">
+    <link rel="stylesheet" href="{{ url_for("static", filename="lkstyle.css") }}">
+    <!-- <link rel="stylesheet" href="{{ url_for("static", filename="script.js") }}"> -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400;300" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital@1&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width">
+  </head>
+
+  <body>
+
+    <header>
+        <div class="logo">
+          <p>Кот ученый — сайт по поиску репетитора</p>
+        </div>
+
+        <div class="icon-menu">
+            <img src="C:\Users\Раиса\Desktop\site\static\menu-ham-icon.png">
+        </div>
+
+        <div class="menu">
+      
+            <div class="icon-close">
+              <img src="C:\Users\Раиса\Desktop\site\static\close-btn.png">
+            </div>
+      
+            <ul>
+              <li><a href="studentProfile.html">Мой профиль</a></li>
+              <li><a href="searchTutor.html">Поиск репетитора</a></li>
+              <li><a href="studentMessages.html">Мои сообщения</a></li>
+              <li><a href="#">Мое расписание</a></li>
+            </ul>
+
+            
+
+        </div>
+
+    </header>
+
+    <div class="exit">
+        <input type="button" value="Выход" class="exitbtn" onclick="exitOnProfile();"> 
+    </div>
+
+    <div class="messages">
+        <div class='content_messages'>
+            <div id="container">
+                <aside>
+                    <ul>
+                        <li>
+                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="">
+                        <div>
+                          <h2>Prénom Nom</h2>
+                          <h3>
+                          <span class="status orange"></span>
+                          offline
+                        </h3>
+                        </div>
+                        </li>
+
+                        <li>
+                      <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_02.jpg" alt="">
+                      <div>
+                        <h2>Prénom Nom</h2>
+                        <h3>
+                          <span class="status green"></span>
+                          online
+                        </h3>
+                      </div>
+                        </li>
+                    
+                        <li>
+                      <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_03.jpg" alt="">
+                      <div>
+                        <h2>Prénom Nom</h2>
+                        <h3>
+                          <span class="status orange"></span>
+                          offline
+                        </h3>
+                      </div>
+                        </li>
+
+                        <li>
+                      <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_04.jpg" alt="">
+                      <div>
+                        <h2>Prénom Nom</h2>
+                        <h3>
+                          <span class="status green"></span>
+                          online
+                        </h3>
+                      </div>
+                        </li>
+
+                        <li>
+                      <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_05.jpg" alt="">
+                      <div>
+                        <h2>Prénom Nom</h2>
+                        <h3>
+                          <span class="status orange"></span>
+                          offline
+                        </h3>
+                      </div>
+                        </li>
+
+                        <li>
+                      <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_06.jpg" alt="">
+                      <div>
+                        <h2>Prénom Nom</h2>
+                        <h3>
+                          <span class="status green"></span>
+                          online
+                        </h3>
+                      </div>
+                        </li>
+
+                        <li>
+                      <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_07.jpg" alt="">
+                      <div>
+                        <h2>Prénom Nom</h2>
+                        <h3>
+                          <span class="status green"></span>
+                          online
+                        </h3>
+                      </div>
+                        </li>
+                    
+                    </ul>
+                </aside>
+                <main>
+                  <header>
+                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="">
+                    <div>
+                      <h2>Chat with Vincent Porter</h2>
+                      <h3>already 1902 messages</h3>
+                    </div>
+                  </header>
+                  <ul id="chat">
+                    <li class="you">
+                      <div class="entete">
+                        <span class="status green"></span>
+                        <h2>Vincent</h2>
+                        <h3>10:12AM, Today</h3>
+                      </div>
+                      <div class="triangle"></div>
+                      <div class="message">
+                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                      </div>
+                    </li>
+                    <li class="me">
+                      <div class="entete">
+                        <h3>10:12AM, Today</h3>
+                        <h2>Vincent</h2>
+                        <span class="status blue"></span>
+                      </div>
+                      <div class="triangle"></div>
+                      <div class="message">
+                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                      </div>
+                    </li>
+                    <li class="me">
+                      <div class="entete">
+                        <h3>10:12AM, Today</h3>
+                        <h2>Vincent</h2>
+                        <span class="status blue"></span>
+                      </div>
+                      <div class="triangle"></div>
+                      <div class="message">
+                        OK
+                      </div>
+                    </li>
+                    <li class="you">
+                      <div class="entete">
+                        <span class="status green"></span>
+                        <h2>Vincent</h2>
+                        <h3>10:12AM, Today</h3>
+                      </div>
+                      <div class="triangle"></div>
+                      <div class="message">
+                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                      </div>
+                    </li>
+                    <li class="me">
+                      <div class="entete">
+                        <h3>10:12AM, Today</h3>
+                        <h2>Vincent</h2>
+                        <span class="status blue"></span>
+                      </div>
+                      <div class="triangle"></div>
+                      <div class="message">
+                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                      </div>
+                    </li>
+                    <li class="me">
+                      <div class="entete">
+                        <h3>10:12AM, Today</h3>
+                        <h2>Vincent</h2>
+                        <span class="status blue"></span>
+                      </div>
+                      <div class="triangle"></div>
+                      <div class="message">
+                        OK
+                      </div>
+                    </li>
+                  </ul>
+                  <footer>
+                    <textarea placeholder="Type your message"></textarea>
+                    <a href="#">Send</a>
+                  </footer>
+                </main>
+              </div>
+        </div>
+    </div>
+    
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="C:\Users\Раиса\Desktop\site\static\script.js"></script>
+  </body>
+</html>
