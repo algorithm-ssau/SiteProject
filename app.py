@@ -1,4 +1,4 @@
-import os, hashlib, json
+import os, hashlib, json, codecs
 from flask import (
     Flask,
     render_template,
@@ -32,6 +32,18 @@ def login():
             return render_template("errorRegistration.html", errorMessage="Ошибка входа!")
         resp = make_response(redirect("/welcome"))
         resp.set_cookie('token', user['Токен'], max_age=60*60*24*365*2)
+        if user['Город'] == 'SAMARA':
+            resp.set_cookie('citycode', '0', max_age=60*60*24*365*2)
+        elif user['Город'] == 'MOSCOW':
+            resp.set_cookie('citycode', '1', max_age=60*60*24*365*2)
+        elif user['Город'] == 'KAZAN':
+            resp.set_cookie('citycode', '2', max_age=60*60*24*365*2)
+        elif user['Город'] == 'KRASNOYARSK':
+            resp.set_cookie('citycode', '3', max_age=60*60*24*365*2)
+        elif user['Город'] == 'SOCHI':
+            resp.set_cookie('citycode', '4', max_age=60*60*24*365*2)
+        elif user['Город'] == 'SARANSK':
+            resp.set_cookie('citycode', '5', max_age=60*60*24*365*2)
         return resp
     return render_template("login.html")
 
@@ -43,6 +55,7 @@ def welcome():
         if user == None:
             resp = make_response(redirect("/"))
             resp.set_cookie('token', '', expires = 0)
+            resp.set_cookie('citycode', '', expires = 0)
             return resp
         if user['Роль'] == 'Репетитор':
             return render_template("welcomeTutor.html")
@@ -122,6 +135,18 @@ def new_student():
             )
         resp = make_response(redirect("/welcome"))
         resp.set_cookie('token', res.getErrorMessage(), max_age=60*60*24*365*2)
+        if user['Город'] == 'SAMARA':
+            resp.set_cookie('citycode', '0', max_age=60*60*24*365*2)
+        elif user['Город'] == 'MOSCOW':
+            resp.set_cookie('citycode', '1', max_age=60*60*24*365*2)
+        elif user['Город'] == 'KAZAN':
+            resp.set_cookie('citycode', '2', max_age=60*60*24*365*2)
+        elif user['Город'] == 'KRASNOYARSK':
+            resp.set_cookie('citycode', '3', max_age=60*60*24*365*2)
+        elif user['Город'] == 'SOCHI':
+            resp.set_cookie('citycode', '4', max_age=60*60*24*365*2)
+        elif user['Город'] == 'SARANSK':
+            resp.set_cookie('citycode', '5', max_age=60*60*24*365*2)
         return resp
     return render_template("newstudent.html")
 
@@ -213,6 +238,18 @@ def new_teacher():
             )
         resp = make_response(redirect("/welcome"))
         resp.set_cookie('token', res.getErrorMessage(), max_age=60*60*24*365*2)
+        if user['Город'] == 'SAMARA':
+            resp.set_cookie('citycode', '0', max_age=60*60*24*365*2)
+        elif user['Город'] == 'MOSCOW':
+            resp.set_cookie('citycode', '1', max_age=60*60*24*365*2)
+        elif user['Город'] == 'KAZAN':
+            resp.set_cookie('citycode', '2', max_age=60*60*24*365*2)
+        elif user['Город'] == 'KRASNOYARSK':
+            resp.set_cookie('citycode', '3', max_age=60*60*24*365*2)
+        elif user['Город'] == 'SOCHI':
+            resp.set_cookie('citycode', '4', max_age=60*60*24*365*2)
+        elif user['Город'] == 'SARANSK':
+            resp.set_cookie('citycode', '5', max_age=60*60*24*365*2)
         return resp
     return render_template("newteacher.html")
 
@@ -231,6 +268,7 @@ def profile():
     if user == None:
         resp = make_response(redirect("/"))
         resp.set_cookie('token', '', expires = 0)
+        resp.set_cookie('citycode', '', expires = 0)
         return resp
     if user['Фотография'] == 'Стандарт':
         photoUrlCat = str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон'] + str(user['ID']) + str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон'] + str(user['ID'])
@@ -270,6 +308,7 @@ def edit():
     if user == None:
         resp = make_response(redirect("/"))
         resp.set_cookie('token', '', expires = 0)
+        resp.set_cookie('citycode', '', expires = 0)
         return resp
     photo = ""
     if user['Фотография'] == 'Стандарт':
@@ -431,6 +470,7 @@ def edit():
     if user == None:
         resp = make_response(redirect("/"))
         resp.set_cookie('token', '', expires = 0)
+        resp.set_cookie('citycode', '', expires = 0)
         return resp
     if user['Роль'] == 'Репетитор':
         studCHECK = ""
@@ -512,6 +552,7 @@ def search():
     if user == None:
         resp = make_response(redirect("/"))
         resp.set_cookie('token', '', expires = 0)
+        resp.set_cookie('citycode', '', expires = 0)
         return resp
     if user['Роль'] == 'Репетитор':
         return render_template("searchStudent.html")
@@ -524,11 +565,19 @@ def messages():
     if user == None:
         resp = make_response(redirect("/"))
         resp.set_cookie('token', '', expires = 0)
+        resp.set_cookie('citycode', '', expires = 0)
         return resp
     if user['Роль'] == 'Репетитор':
         return render_template("tutorMessages.html")
     else:
         return render_template("studentMessages.html")
+
+@app.route("/prefabs/teacher")
+def templateteacher():
+    f = codecs.open('static/prefabs/prefabResultWithTeacher.html', encoding='utf-8', mode='r')
+    text = f.read()
+    f.close()
+    return text
 
 
 @app.route("/api/found/teacher/")

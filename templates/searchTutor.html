@@ -4,7 +4,9 @@
     <title>Личный кабинет ученика</title>
     <meta charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.2.0/sha512.js"></script>
     <script src="{{ url_for("static", filename="exitScript.js") }}"></script>
+    <script src="{{ url_for("static", filename="foundTeacher.js") }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="lkstyle.css") }}">
     <!-- <link rel="stylesheet" href="{{ url_for("static", filename="script.js") }}"> -->
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
@@ -47,82 +49,43 @@
 
     <div class="search_tutor">
         <div class="filter">
-            <p><b>Минимальный стаж:</b><input type="number" placeholder="Полных лет" name="experienceMin"><Br>
-              <b>Максимальный стаж:</b><input type="number" placeholder="Полных лет" name="experienceMax"><Br></p>
+            <p><b>Минимальный стаж:</b><input type="number" placeholder="Полных лет" name="experienceMin" id="experienceMin"><Br>
+              <b>Максимальный стаж:</b><input type="number" placeholder="Полных лет" name="experienceMax" id="experienceMax"><Br></p>
             <p><b>Формат:</b><br>
-              <input type="checkbox" name="option1" value="a1"><label for="option1">Репетитор ко мне</label><Br>
-              <input type="checkbox" name="option2" value="a2"><label for="option2">Я к репетитору</label><Br>
-              <input type="checkbox" name="option3" value="a3"><label for="option3">Дистанционно</label><Br></p>
+              <input type="checkbox" name="option1" value="a1" id="a1checkid"><label for="option1">Репетитор ко мне</label><Br>
+              <input type="checkbox" name="option2" value="a2" id="a2checkid"><label for="option2">Я к репетитору</label><Br>
+              <input type="checkbox" name="option3" value="a3" id="a3checkid"><label for="option3">Дистанционно</label><Br></p>
             <p><b>Предмет:</b><br>
-              <input type="checkbox" name="math" value="b1"><label for="math">Математика</label><Br>
-              <input type="checkbox" name="rus" value="b2"><label for="rus">Русский язык</label><Br>
-              <input type="checkbox" name="phys" value="b3"><label for="phys">Физика</label><Br>
-              <input type="checkbox" name="inf" value="b4"><label for="inf">Информатика</label><Br>
-              <input type="checkbox" name="chemistry" value="b5"><label for="chemistry">Химия</label><Br>
-              <input type="checkbox" name="bio" value="b6"><label for="bio">Биология</label><Br>
-              <input type="checkbox" name="history" value="b7"><label for="history">История</label><Br>
-              <input type="checkbox" name="social" value="b8"><label for="social">Обществознание</label><Br>
-              <input type="checkbox" name="literature" value="b9"><label for="literature">Литература</label><Br>
-              <input type="checkbox" name="geo" value="b10"><label for="geo">География</label><Br>
-              <input type="checkbox" name="economy" value="b11"><label for="economy">Экономика</label><Br>
-              <input type="checkbox" name="eng" value="b12"><label for="eng">Английский язык</label><Br>
-              <input type="checkbox" name="dutch" value="b13"><label for="dutch">Немецкий язык</label><Br></p>
+              <input type="checkbox" name="math" value="b1" id="Less1"><label for="math">Математика</label><Br>
+              <input type="checkbox" name="rus" value="b2" id="Less2"><label for="rus">Русский язык</label><Br>
+              <input type="checkbox" name="phys" value="b3" id="Less3"><label for="phys">Физика</label><Br>
+              <input type="checkbox" name="inf" value="b4" id="Less4"><label for="inf">Информатика</label><Br>
+              <input type="checkbox" name="chemistry" value="b5" id="Less5"><label for="chemistry">Химия</label><Br>
+              <input type="checkbox" name="bio" value="b6" id="Less6"><label for="bio">Биология</label><Br>
+              <input type="checkbox" name="history" value="b7" id="Less7"><label for="history">История</label><Br>
+              <input type="checkbox" name="social" value="b8" id="Less8"><label for="social">Обществознание</label><Br>
+              <input type="checkbox" name="literature" value="b9" id="Less9"><label for="literature">Литература</label><Br>
+              <input type="checkbox" name="geo" value="b10" id="Less10"><label for="geo">География</label><Br>
+              <input type="checkbox" name="economy" value="b11" id="Less11"><label for="economy">Экономика</label><Br>
+              <input type="checkbox" name="eng" value="b12" id="Less12"><label for="eng">Английский язык</label><Br>
+              <input type="checkbox" name="dutch" value="b13" id="Less13"><label for="dutch">Немецкий язык</label><Br></p>
             <p><b>Минимальная ставка:</b><br>
-              <input type="number" placeholder="Например, 300" name="rateMin"><Br>
+              <input type="number" placeholder="Например, 300" name="rateMin" id="rateMin"><Br>
               <b>Максимальная ставка:</b><br>
-                <input type="number" placeholder="Например, 600" name="rateMax"></p>
+                <input type="number" placeholder="Например, 600" name="rateMax" id="rateMax"></p>
             <p><b>Образование:</b><br>
-              <input type="checkbox" name="educationStudent" value="b14"><label for="educationStudent">Студент</label><Br>
-                <input type="checkbox" name="educationAspir" value="b15"><label for="educationAspir">Аспирант</label><Br>
-                <input type="checkbox" name="educationTeacher" value="b16"><label for="educationTeacher">Учитель</label><Br>
-                <input type="checkbox" name="educationPrepod" value="b17"><label for="educationPrepod">Преподаватель</label><Br></p>
+              <input type="checkbox" name="educationStudent" value="b14" id="edus"><label for="educationStudent">Студент</label><Br>
+                <input type="checkbox" name="educationAspir" value="b15" id="edua"><label for="educationAspir">Аспирант</label><Br>
+                <input type="checkbox" name="educationTeacher" value="b16" id="edut"><label for="educationTeacher">Учитель</label><Br>
+                <input type="checkbox" name="educationPrepod" value="b17" id="edup"><label for="educationPrepod">Преподаватель</label><Br></p>
             <p><b>Пол:</b><br>
               <input type="radio" name="sex" value="Любой" checked>Любой<Br>
               <input type="radio" name="sex" value="Мужской">Мужской<Br>
               <input type="radio" name="sex" value="Женский">Женский<Br></p>
-            <input type="button" value="Найти репетитора" class="searchbtn">
+            <input type="button" value="Найти репетитора" class="searchbtn" onclick="foundTeacher();">
         </div>
 
-        <div class="search_result">
-
-            <div class="search_tutor" id="tutor1">
-                <div class="photo">
-                  <img id="img_avatar" width="110" height="110" src="https://avatars.mds.yandex.net/get-pdb/216365/cafc6922-7989-4b22-b23d-36a495ce95a0/s1200">
-                </div>
-                <div class="about_tutor">
-                    <p><b>Фамилия:</b> Иванов</p>
-                <p><b>Имя:</b> Иван</p>
-                <p><b>Образование:</b> Аспирант</p>
-                <p><b>Стаж:</b> 3</p>
-                <p><b>Ставка:</b> 1000</p>
-                </div>
-            </div>
-
-            <div class="search_tutor" id="tutor2">
-            <div class="photo">
-                <img id="img_avatar" width="110" height="110" src="https://avatars.mds.yandex.net/get-pdb/216365/cafc6922-7989-4b22-b23d-36a495ce95a0/s1200">
-            </div>
-            <div class="about_tutor">
-            <p><b>Фамилия:</b> Федоров</p>
-            <p><b>Имя:</b> Федор</p>
-            <p><b>Образование:</b> Студент</p>
-            <p><b>Стаж:</b> 1</p>
-            <p><b>Ставка:</b> 550</p>
-            </div>
-            </div>
-
-            <div class="search_tutor" id="tutor3">
-                <div class="photo">
-                  <img id="img_avatar" width="110" height="110" src="https://avatars.mds.yandex.net/get-pdb/216365/cafc6922-7989-4b22-b23d-36a495ce95a0/s1200">
-                </div>
-                <div class="about_tutor">
-                <p><b>Фамилия:</b> Филиппов</p>
-                <p><b>Имя:</b> Филипп</p>
-                <p><b>Образование:</b> Преподаватель</p>
-                <p><b>Стаж:</b> 10</p>
-                <p><b>Ставка:</b> 600</p>
-                </div>
-            </div>
+        <div class="search_result" id="search_result_id_block">
 
         </div>
     </div>
