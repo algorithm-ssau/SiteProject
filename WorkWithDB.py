@@ -613,4 +613,3 @@ class WorkWithDB():
             res.setErrorMessage("Ошибка выполнения операции.")
 
         return res
-
