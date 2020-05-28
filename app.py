@@ -271,7 +271,7 @@ def profile():
         resp.set_cookie('citycode', '', expires = 0)
         return resp
     if user['Фотография'] == 'Стандарт':
-        photo = "https://robohash.org/" + str(user['ID']) + ".png?set=set4"
+        photo = "https://api.adorable.io/avatars/234/" + str(user['ID'])
     else:
         photo = "/images/" + str(user['ID']) + ".png"
     if user['Роль'] == 'Репетитор':
@@ -309,7 +309,7 @@ def edit():
         return resp
     photo = ""
     if user['Фотография'] == 'Стандарт':
-        photo = "https://robohash.org/" + str(user['ID']) + ".png?set=set4"
+        photo = "https://api.adorable.io/avatars/234/" + str(user['ID'])
     else:
         photo = "/images/" + str(user['ID']) + ".png"
     if request.method == "POST" and user['Роль'] == 'Репетитор':
@@ -569,6 +569,13 @@ def messages():
 @app.route("/prefabs/teacher")
 def templateteacher():
     f = codecs.open('static/prefabs/prefabResultWithTeacher.html', encoding='utf-8', mode='r')
+    text = f.read()
+    f.close()
+    return text
+
+@app.route("/prefabs/student")
+def templatestudent():
+    f = codecs.open('static/prefabs/prefabResultWithStudent.html', encoding='utf-8', mode='r')
     text = f.read()
     f.close()
     return text

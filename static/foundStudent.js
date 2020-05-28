@@ -1,19 +1,19 @@
-function foundTeacher() {
+function foundStudent() {
     var requestAPI = new XMLHttpRequest();
     let resultWithTeachers;
     var request = new XMLHttpRequest();
     let prefab;
     let result = '';
     let counter = 1;
-    let url = '/api/found/teacher/?city=';
+    let url = '/api/found/student/?city=';
     requestAPI.onreadystatechange = function(){
         if(requestAPI.readyState == 4 && requestAPI.status == 200){
             resultWithTeachers = JSON.parse(requestAPI.responseText);
             if(resultWithTeachers.length == 0){
-                search_result_id_block.innerHTML = 'Репетиторы, подходящие под фильтр, не найдены('
+                search_result_id_block.innerHTML = 'Ученики, подходящие под фильтр, не найдены('
             }
             else{
-                request.open('GET', '/prefabs/teacher');
+                request.open('GET', '/prefabs/student');
                 request.send();
             }
         }
@@ -30,14 +30,6 @@ function foundTeacher() {
     window.scrollTo(0, 0);
 
     url += get_cookie('citycode');
-
-    let expmin = document.getElementById("experienceMin").value;
-    if (expmin != '')
-        url += '&expmin=' + expmin;
-
-    let expmax = document.getElementById("experienceMax").value;
-    if (expmax != '')
-        url += '&expmax=' + expmax;
 
     let ttos = document.getElementById("a1checkid")
     if (ttos.checked)
@@ -103,29 +95,11 @@ function foundTeacher() {
     if (Less13.checked)
         url += '&dutch=1';
 
-    let ratemin = document.getElementById("rateMin").value;
-    if (ratemin != '')
-        url += '&ratemin=' + ratemin;
+    let classmin = document.getElementById("classMin").value;
+        url += '&classmin=' + classmin;
 
-    let ratemax = document.getElementById("rateMax").value;
-    if (ratemax != '')
-        url += '&ratemax=' + ratemax;
-
-    let EduS = document.getElementById("edus")
-    if (EduS.checked)
-        url += '&edstudent=1';
-
-    let EduA = document.getElementById("edua")
-    if (EduA.checked)
-        url += '&edaspir=1';
-
-    let EduT = document.getElementById("edut")
-    if (EduT.checked)
-        url += '&edteacher=1';
-
-    let EduP = document.getElementById("edup")
-    if (EduP.checked)
-        url += '&edprepod=1';
+    let classmax = document.getElementById("classMax").value;
+        url += '&classmax=' + classmax;
 
     let sex=document.getElementsByName('sex');
     if (sex[1].checked) url += '&sex=m';
@@ -138,25 +112,23 @@ function foundTeacher() {
     request.onreadystatechange = function(){
         if(request.readyState == 4 && request.status == 200){
             prefab = request.responseText;
-            resultWithTeachers.forEach(teacher => addTeacher(teacher));
+            resultWithTeachers.forEach(student => addStudent(student));
             search_result_id_block.innerHTML = result;
         }
     }
 
-    function addTeacher(teacher){
+    function addStudent(student){
         newPrefab = prefab.substring(0);
         newPrefab = newPrefab.replace('{{NUMBER}}', counter.toString());
         counter++;
-        newPrefab = newPrefab.replace('{{LASTNAME}}', teacher['Фамилия']);
-        newPrefab = newPrefab.replace('{{FIRSTNAME}}', teacher['Имя']);
-        newPrefab = newPrefab.replace('{{EDUCATION}}', teacher['Образование']);
-        newPrefab = newPrefab.replace('{{EXP}}', teacher['Стаж_преподавания_в_годах'].toString());
-        newPrefab = newPrefab.replace('{{RATE}}', teacher['Ставка_в_час'].toString());
-        if(teacher['Фотография'] == 'Стандарт'){
-            newPrefab = newPrefab.replace('{{PHOTO}}', 'https://api.adorable.io/avatars/234/' + teacher['ID'].toString());
+        newPrefab = newPrefab.replace('{{LASTNAME}}', student['Фамилия']);
+        newPrefab = newPrefab.replace('{{FIRSTNAME}}', student['Имя']);
+        newPrefab = newPrefab.replace('{{CLASS}}', student['Класс']);
+        if(student['Фотография'] == 'Стандарт'){
+            newPrefab = newPrefab.replace('{{PHOTO}}', 'https://api.adorable.io/avatars/234/' + student['ID'].toString());
         }
         else{
-            newPrefab = newPrefab.replace('{{PHOTO}}', "/images/" + teacher['ID'].toString() + ".png");
+            newPrefab = newPrefab.replace('{{PHOTO}}', "/images/" + student['ID'].toString() + ".png");
         }
         
         result += newPrefab;
