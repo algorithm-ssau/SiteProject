@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Личный кабинет репетитора</title>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{{ url_for("static", filename="exitScript.js") }}"></script>
+    <link rel="stylesheet" type="text/css" href="C:\Users\Раиса\Documents\GitHub\SiteProject\static\lkstyle.css">
+    <link rel="stylesheet" href="{{ url_for("static", filename="lkstyle.css") }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- <link rel="stylesheet" href="{{ url_for("static", filename="script.js") }}"> -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400;300" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital@1&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width">
+  </head>
+
+  <body>
+
+    <header>
+        <div class="logo">
+          <p>Кот ученый — сайт по поиску репетитора</p>
+        </div>
+
+        <div class="icon-menu">
+            <img src="C:\Users\Раиса\Documents\GitHub\SiteProject\static\menu-ham-icon.png">
+        </div>
+
+        <div class="menu">
+      
+            <div class="icon-close">
+              <img src="C:\Users\Раиса\Documents\GitHub\SiteProject\static\close-btn.png">
+            </div>
+      
+            <ul>
+              <li><a href="tutorProfile.html">Мой профиль</a></li>
+              <li><a href="searchStudent.html">Поиск ученика</a></li>
+              <li><a href="tutorMessages.html">Мои сообщения</a></li>
+              <li><a href="#">Мое расписание</a></li>
+            </ul>
+
+        </div>
+
+    </header>
+
+    <div class="exit">
+        <input type="button" value="Выход" class="exitbtn" onclick="exitOnProfile();"> 
+    </div>
+
+    <div class="edit_profile">
+        <form method="POST" enctype=multipart/form-data>
+            <div class="avatar">
+              <img id="img_avatar" width="250" height="250" src="{{Photo}}">
+            </div>
+           
+              <div class="edit_tutor">
+                
+              <label for="LastName"><b>Фамилия</b></label>
+              <input type="text" name="LastName" value="{{LastName}}" required>
+      
+              <label for="FirstName"><b>Имя</b></label>
+              <input type="text" name="FirstName" value="{{FirstName}}" required>
+      
+              <label for="date"><b>Дата рождения</b></label><Br>
+              <input type="date" id="date" name="date" value="{{BirthDay}}" required>
+      
+              <label for="education"><p><b>Образование</b></p></label>
+              <select name="education" required="required">
+                <option value="Студент" {{CHECK1}}>Студент</option>
+                <option value="Аспирант" {{CHECK2}}>Аспирант</option>
+                <option value="Учитель" {{CHECK3}}>Учитель</option>
+                <option value="Преподаватель" {{CHECK4}}>Преподаватель</option>
+              </select><Br><Br>
+      
+              <label for="experience"><b>Стаж</b></label><Br>
+              <input type="number" placeholder="Полных лет" name="experience" value="{{Exp}}" required><Br>
+      
+              <p><b>Преподаваемые предметы</b></p>
+              <input type="checkbox" name="math" value="b1" {{LESS1}}><label for="math">Математика</label><Br>
+              <input type="checkbox" name="rus" value="b2" {{LESS2}}><label for="rus">Русский язык</label><Br>
+              <input type="checkbox" name="phys" value="b3" {{LESS3}}><label for="phys">Физика</label><Br>
+              <input type="checkbox" name="inf" value="b4" {{LESS4}}><label for="inf">Информатика</label><Br>
+              <input type="checkbox" name="chemistry" value="b5" {{LESS5}}><label for="chemistry">Химия</label><Br>
+              <input type="checkbox" name="bio" value="b6" {{LESS6}}><label for="bio">Биология</label><Br>
+              <input type="checkbox" name="history" value="b7" {{LESS7}}><label for="history">История</label><Br>
+              <input type="checkbox" name="social" value="b8" {{LESS8}}><label for="social">Обществознание</label><Br>
+              <input type="checkbox" name="literature" value="b9" {{LESS9}}><label for="literature">Литература</label><Br>
+              <input type="checkbox" name="geo" value="b10" {{LESS10}}><label for="geo">География</label><Br>
+              <input type="checkbox" name="economy" value="b11" {{LESS11}}><label for="economy">Экономика</label><Br>
+              <input type="checkbox" name="eng" value="b12" {{LESS12}}><label for="eng">Английский язык</label><Br>
+              <input type="checkbox" name="dutch" value="b13" {{LESS13}}><label for="dutch">Немецкий язык</label><Br>
+      
+              <p><b>Формат занятий</b></p>
+              <input type="checkbox" name="option1" value="a1" {{FORM1}}><label for="option1">Я к ученику</label><Br>
+              <input type="checkbox" name="option2" value="a2" {{FORM2}}><label for="option2">Ученик ко мне</label><Br>
+              <input type="checkbox" name="option3" value="a3" {{FORM3}}><label for="option3">Удаленно</label><Br>
+      
+              <p><b>Вид занятий</b></p>
+              <input type="checkbox" name="single" value="c1" {{VIEW1}}><label for="single">Разовые</label><Br>
+              <input type="checkbox" name="group" value="c2" {{VIEW2}}><label for="group">Групповые</label><Br>
+              <input type="checkbox" name="home" value="c3" {{VIEW3}}><label for="home">Помощь с домашней работой</label><Br> 
+              <input type="checkbox" name="usual" value="c4" {{VIEW4}}><label for="usual">Обычные</label><Br>
+      
+              <label for="rate"><p><b>Ставка в час</b></p></label>
+              <input type="number" placeholder="Например, 350" name="rate" value="{{Price}}" required>
+      
+              <label for="phone"><p><b>Номер телефона</b></p></label>
+              <input type="tel" placeholder="В формате 89***." name="phone" pattern="[0-9]{11}" value="{{Phone}}" required>
+      
+              <label for="psw"><b>Новый пароль</b></label>
+              <input type="password" name="psw">
+            
+              <label for="about"><p><b>О себе</b></p></label>
+              <textarea name="about">{{About}}</textarea>
+      
+                <div class="form-group">
+                  <input type="file" accept="image/*,image/jpeg" name="file" id="file" class="input-file">
+                  <label for="file" class="btn btn-tertiary js-labelFile">
+                    <i class="icon fa fa-check"></i>
+                    <span class="js-fileName">Загрузить фотографию</span> 
+                  </label>
+                </div>
+              
+      
+              <input type="submit" value="Сохранить информацию" class="savebtn">
+                </form>
+            
+            </div>
+        
+                
+    </div>
+    
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="C:\Users\Раиса\Documents\GitHub\SiteProject\static\script.js"></script>
+  </body>
+</html>
