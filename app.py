@@ -19,22 +19,36 @@ def add_header(response):
     response.headers['Cache-Control'] = 'public, max-age=0'
     return response
 
-
 @app.route("/", methods=["post", "get"])
 def login():
     token = request.cookies.get('token')
     if token != None:
-        return redirect("/profile")
+        return redirect("/welcome")
     if request.method == "POST":
         login = request.form.get("email")
         password = request.form.get("psw")
         user = WorkWithDB.FoundUserInDatabase(login, password)
         if user == None:
             return render_template("errorRegistration.html", errorMessage="Ошибка входа!")
-        resp = make_response(redirect("/profile"))
+        resp = make_response(redirect("/welcome"))
         resp.set_cookie('token', user['Токен'], max_age=60*60*24*365*2)
         return resp
     return render_template("login.html")
+
+@app.route("/welcome", methods=["post", "get"])
+def welcome():
+    token = request.cookies.get('token')
+    if token != None:
+        user = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
+        if user == None:
+            resp = make_response(redirect("/"))
+            resp.set_cookie('token', '', expires = 0)
+            return resp
+        if user['Роль'] == 'Репетитор':
+            return render_template("welcomeTutor.html")
+        else:
+            return render_template("welcomeStudent.html")
+
     
 @app.route("/newstudent", methods=["post", "get"])
 def new_student():
@@ -106,7 +120,7 @@ def new_student():
             return render_template(
                 "errorRegistration.html", errorMessage=res.getErrorMessage()
             )
-        resp = make_response(redirect("/"))
+        resp = make_response(redirect("/welcome"))
         resp.set_cookie('token', res.getErrorMessage(), max_age=60*60*24*365*2)
         return resp
     return render_template("newstudent.html")
@@ -197,7 +211,7 @@ def new_teacher():
             return render_template(
                 "errorRegistration.html", errorMessage=res.getErrorMessage()
             )
-        resp = make_response(redirect("/"))
+        resp = make_response(redirect("/welcome"))
         resp.set_cookie('token', res.getErrorMessage(), max_age=60*60*24*365*2)
         return resp
     return render_template("newteacher.html")
@@ -238,7 +252,7 @@ def profile():
         for viewLes in user['Вид_занятий']:
             viewsLessons += '<br>' + viewLes
         htmlViewsLessons = Markup(viewsLessons)
-        return render_template("tutorprofile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = str(user['Стаж_преподавания_в_годах']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, FormatLessons = htmlFormatLessons, ViewsLessons = htmlViewsLessons, Price = str(user['Ставка_в_час']), Photo = photo)
+        return render_template("tutorProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = str(user['Стаж_преподавания_в_годах']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, FormatLessons = htmlFormatLessons, ViewsLessons = htmlViewsLessons, Price = str(user['Ставка_в_час']), Photo = photo)
     else:
         lessons = ''
         for les in user['Изучаемые_предметы']:
@@ -248,7 +262,7 @@ def profile():
         for Fles in user['Формат_занятий']:
             formatLes += '<br>' + Fles
         htmlFormat = Markup(formatLes)
-        return render_template("profile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], SchoolClass = str(user['Класс']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Format = htmlFormat, Photo = photo)
+        return render_template("studentProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], SchoolClass = str(user['Класс']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Format = htmlFormat, Photo = photo)
 
 @app.route("/edit", methods=["post", "get"])
 def edit():
@@ -456,7 +470,7 @@ def edit():
         ViewChecks[1] = "checked" if 'Групповые' in user['Вид_занятий'] else ""
         ViewChecks[2] = "checked" if 'Помощь с домашкой' in user['Вид_занятий'] else ""
         ViewChecks[3] = "checked" if 'Обычные' in user['Вид_занятий'] else ""
-        return render_template("edittutorprofile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = birthInTemplate, CHECK1 = studCHECK, CHECK2 = aspirCHECK, CHECK3 = teacherCHECK, CHECK4 = prepodCHECK, Exp = str(user['Стаж_преподавания_в_годах']), LESS1 = LessChecks[0], LESS2 = LessChecks[1], LESS3 = LessChecks[2], LESS4 = LessChecks[3], LESS5 = LessChecks[4], LESS6 = LessChecks[5], LESS7 = LessChecks[6], LESS8 = LessChecks[7], LESS9 = LessChecks[8], LESS10 = LessChecks[9], LESS11 = LessChecks[10], LESS12 = LessChecks[11], LESS13 = LessChecks[12], FORM1 = FormatChecks[0], FORM2 = FormatChecks[1], FORM3 = FormatChecks[2], VIEW1 = ViewChecks[0], VIEW2 = ViewChecks[1], VIEW3 = ViewChecks[2], VIEW4 = ViewChecks[3], Price = str(user['Ставка_в_час']), Phone = user['Телефон'], About = user['О_себе'], Photo = photo)
+        return render_template("editTutor.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = birthInTemplate, CHECK1 = studCHECK, CHECK2 = aspirCHECK, CHECK3 = teacherCHECK, CHECK4 = prepodCHECK, Exp = str(user['Стаж_преподавания_в_годах']), LESS1 = LessChecks[0], LESS2 = LessChecks[1], LESS3 = LessChecks[2], LESS4 = LessChecks[3], LESS5 = LessChecks[4], LESS6 = LessChecks[5], LESS7 = LessChecks[6], LESS8 = LessChecks[7], LESS9 = LessChecks[8], LESS10 = LessChecks[9], LESS11 = LessChecks[10], LESS12 = LessChecks[11], LESS13 = LessChecks[12], FORM1 = FormatChecks[0], FORM2 = FormatChecks[1], FORM3 = FormatChecks[2], VIEW1 = ViewChecks[0], VIEW2 = ViewChecks[1], VIEW3 = ViewChecks[2], VIEW4 = ViewChecks[3], Price = str(user['Ставка_в_час']), Phone = user['Телефон'], About = user['О_себе'], Photo = photo)
     else:
         birth = user['День_рождения'].split('.')
         birthInTemplate = birth[2] + "-" + birth[1] + "-" + birth[0]
@@ -490,7 +504,32 @@ def edit():
         FormatChecks[0] = "checked" if 'Еду к преподавателю' in user['Формат_занятий'] else ""
         FormatChecks[1] = "checked" if 'Преподаватель ко мне' in user['Формат_занятий'] else ""
         FormatChecks[2] = "checked" if 'Дистанционно' in user['Формат_занятий'] else ""
-        return render_template("editStudentProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = birthInTemplate, CHECK1 = ClassChecks[0], CHECK2 = ClassChecks[1], CHECK3 = ClassChecks[2], CHECK4 = ClassChecks[3], CHECK5 = ClassChecks[4], CHECK6 = ClassChecks[5], CHECK7 = ClassChecks[6], CHECK8 = ClassChecks[7], CHECK9 = ClassChecks[8], CHECK10 = ClassChecks[9], CHECK11 = ClassChecks[10], LESS1 = LessChecks[0], LESS2 = LessChecks[1], LESS3 = LessChecks[2], LESS4 = LessChecks[3], LESS5 = LessChecks[4], LESS6 = LessChecks[5], LESS7 = LessChecks[6], LESS8 = LessChecks[7], LESS9 = LessChecks[8], LESS10 = LessChecks[9], LESS11 = LessChecks[10], LESS12 = LessChecks[11], LESS13 = LessChecks[12], FORMAT1 = FormatChecks[0], FORMAT2 = FormatChecks[1], FORMAT3 = FormatChecks[2], Phone = user['Телефон'], About = user['О_себе'], Photo = photo)
+        return render_template("editStudent.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = birthInTemplate, CHECK1 = ClassChecks[0], CHECK2 = ClassChecks[1], CHECK3 = ClassChecks[2], CHECK4 = ClassChecks[3], CHECK5 = ClassChecks[4], CHECK6 = ClassChecks[5], CHECK7 = ClassChecks[6], CHECK8 = ClassChecks[7], CHECK9 = ClassChecks[8], CHECK10 = ClassChecks[9], CHECK11 = ClassChecks[10], LESS1 = LessChecks[0], LESS2 = LessChecks[1], LESS3 = LessChecks[2], LESS4 = LessChecks[3], LESS5 = LessChecks[4], LESS6 = LessChecks[5], LESS7 = LessChecks[6], LESS8 = LessChecks[7], LESS9 = LessChecks[8], LESS10 = LessChecks[9], LESS11 = LessChecks[10], LESS12 = LessChecks[11], LESS13 = LessChecks[12], FORMAT1 = FormatChecks[0], FORMAT2 = FormatChecks[1], FORMAT3 = FormatChecks[2], Phone = user['Телефон'], About = user['О_себе'], Photo = photo)
+
+@app.route("/search")
+def search():
+    user = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
+    if user == None:
+        resp = make_response(redirect("/"))
+        resp.set_cookie('token', '', expires = 0)
+        return resp
+    if user['Роль'] == 'Репетитор':
+        return render_template("searchStudent.html")
+    else:
+        return render_template("searchTutor.html")
+
+@app.route("/messages")
+def messages():
+    user = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
+    if user == None:
+        resp = make_response(redirect("/"))
+        resp.set_cookie('token', '', expires = 0)
+        return resp
+    if user['Роль'] == 'Репетитор':
+        return render_template("tutorMessages.html")
+    else:
+        return render_template("studentMessages.html")
+
 
 @app.route("/api/found/teacher/")
 def foundTeacher():

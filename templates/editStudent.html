@@ -5,9 +5,8 @@
     <meta charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="{{ url_for("static", filename="exitScript.js") }}"></script>
-    <link rel="stylesheet" type="text/css" href="C:\Users\Раиса\Documents\GitHub\SiteProject\static\lkstyle.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="lkstyle.css") }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="{{ url_for("static", filename="lkstyle.css") }}">
     <!-- <link rel="stylesheet" href="{{ url_for("static", filename="script.js") }}"> -->
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400;300" rel="stylesheet" type="text/css">
@@ -23,19 +22,19 @@
         </div>
 
         <div class="icon-menu">
-            <img src="C:\Users\Раиса\Documents\GitHub\SiteProject\static\menu-ham-icon.png">
+          <img src="{{ url_for("static", filename="menu-ham-icon.png") }}">
         </div>
 
         <div class="menu">
       
             <div class="icon-close">
-              <img src="C:\Users\Раиса\Documents\GitHub\SiteProject\static\close-btn.png">
+              <img src="{{ url_for("static", filename="close-btn.png") }}">
             </div>
       
             <ul>
-              <li><a href="studentProfile.html">Мой профиль</a></li>
-              <li><a href="searchTutor.html">Поиск репетитора</a></li>
-              <li><a href="studentMessages.html">Мои сообщения</a></li>
+              <li><a href="/profile">Мой профиль</a></li>
+              <li><a href="/search">Поиск репетитора</a></li>
+              <li><a href="/messages">Мои сообщения</a></li>
               <li><a href="#">Мое расписание</a></li>
             </ul>
 
@@ -78,7 +77,7 @@
                     <option value="11" {{CHECK11}}>11</option>
                 </select><Br><Br>
       
-                <p><b>Предметы</b></p>
+                <p><b>Изучаемые предметы</b></p>
                 <input type="checkbox" name="math" value="b1" {{LESS1}}><label for="math">Математика</label><Br>
                 <input type="checkbox" name="rus" value="b2" {{LESS2}}><label for="rus">Русский язык</label><Br>
                 <input type="checkbox" name="phys" value="b3" {{LESS3}}><label for="phys">Физика</label><Br>
@@ -121,6 +120,6 @@
     </div>
     
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
-    <script src="C:\Users\Раиса\Documents\GitHub\SiteProject\static\script.js"></script>
+    <script src="{{ url_for("static", filename="script.js") }}"></script>
   </body>
 </html>
