@@ -153,11 +153,7 @@ function foundTeacher() {
         newPrefab = newPrefab.replace('{{EXP}}', teacher['Стаж_преподавания_в_годах'].toString());
         newPrefab = newPrefab.replace('{{RATE}}', teacher['Ставка_в_час'].toString());
         if(teacher['Фотография'] == 'Стандарт'){
-            var stringToHash = teacher['ID'].toString() + teacher['Имя'] + teacher['Фамилия'] + teacher['Телефон'] + teacher['ID'].toString() + teacher['ID'].toString() + teacher['Имя'] + teacher['Фамилия'] + teacher['Телефон'] + teacher['ID'].toString();
-            var shaObj = new jsSHA("SHA-512", "TEXT");
-            shaObj.update(stringToHash);
-            var hash = shaObj.getHash("HEX");
-            newPrefab = newPrefab.replace('{{PHOTO}}', 'https://robohash.org/' + hash + '.png?set=set4');
+            newPrefab = newPrefab.replace('{{PHOTO}}', 'https://robohash.org/' + teacher['ID'].toString() + '.png?set=set4');
         }
         else{
             newPrefab = newPrefab.replace('{{PHOTO}}', "/images/" + teacher['ID'].toString() + ".png");

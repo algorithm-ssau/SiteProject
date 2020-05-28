@@ -271,10 +271,7 @@ def profile():
         resp.set_cookie('citycode', '', expires = 0)
         return resp
     if user['Фотография'] == 'Стандарт':
-        photoUrlCat = str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон'] + str(user['ID']) + str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон'] + str(user['ID'])
-        hash_object = hashlib.sha512(photoUrlCat.encode())
-        photoUrlCat = hash_object.hexdigest()
-        photo = "https://robohash.org/" + photoUrlCat + ".png?set=set4"
+        photo = "https://robohash.org/" + str(user['ID']) + ".png?set=set4"
     else:
         photo = "/images/" + str(user['ID']) + ".png"
     if user['Роль'] == 'Репетитор':
@@ -312,10 +309,7 @@ def edit():
         return resp
     photo = ""
     if user['Фотография'] == 'Стандарт':
-        photoUrlCat = str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон'] + str(user['ID']) + str(user['ID']) + user['Имя'] + user['Фамилия'] + user['Телефон'] + str(user['ID'])
-        hash_object = hashlib.sha512(photoUrlCat.encode())
-        photoUrlCat = hash_object.hexdigest()
-        photo = "https://robohash.org/" + photoUrlCat + ".png?set=set4"
+        photo = "https://robohash.org/" + str(user['ID']) + ".png?set=set4"
     else:
         photo = "/images/" + str(user['ID']) + ".png"
     if request.method == "POST" and user['Роль'] == 'Репетитор':
