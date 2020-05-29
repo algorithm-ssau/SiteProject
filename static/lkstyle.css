@@ -193,27 +193,51 @@ textarea {
 
 .photo {
   padding: 60px;
+  width: 25%;
+  float: left;
+  position: absolute;
 }
 
 .photoS {
   padding: 30px;
+  width: 25%;
+  float: left;
+  position: absolute;
 }
 
 .search_result{
   font-family: Roboto;
   font-size: 16pt;
+  width: 600px;
+  margin-left: 100px;
+}
+
+.search_student_result{
+  background-color: #64B5F6;
+  color: white;
+  height: 170px;
+}
+
+.search_tutor_result{
+  background-color: #64B5F6;
+  color: white;
+  height: 263px;
 }
 
 .about_tutor{
-  position: absolute;
   left: 200px;
-  top:1px;
+  top:24px;
+  width: 60%;
+  position: relative;
+  height: 150px;
 }
 
 .about_student{
-  position: absolute;
   left: 200px;
-  top:8px;
+  top:24px;
+  width: 60%;
+  position: relative;
+  height: 150px;
 }
 
 #tutor1 {

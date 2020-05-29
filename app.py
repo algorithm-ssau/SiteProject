@@ -287,7 +287,7 @@ def profile():
         for viewLes in user['Вид_занятий']:
             viewsLessons += '<br>' + viewLes
         htmlViewsLessons = Markup(viewsLessons)
-        return render_template("tutorProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = str(user['Стаж_преподавания_в_годах']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, FormatLessons = htmlFormatLessons, ViewsLessons = htmlViewsLessons, Price = str(user['Ставка_в_час']), Photo = photo)
+        return render_template("tutorProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = str(user['Стаж_преподавания_в_годах']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, FormatLessons = htmlFormatLessons, ViewsLessons = htmlViewsLessons, Price = str(user['Ставка_в_час']), Photo = photo, Button = "Редактировать информацию", DoCode = "document.location.href = '/edit'")
     else:
         lessons = ''
         for les in user['Изучаемые_предметы']:
@@ -297,7 +297,7 @@ def profile():
         for Fles in user['Формат_занятий']:
             formatLes += '<br>' + Fles
         htmlFormat = Markup(formatLes)
-        return render_template("studentProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], SchoolClass = str(user['Класс']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Format = htmlFormat, Photo = photo)
+        return render_template("studentProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], SchoolClass = str(user['Класс']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Format = htmlFormat, Photo = photo, Button = "Редактировать информацию", DoCode = "document.location.href = '/edit'")
 
 @app.route("/edit", methods=["post", "get"])
 def edit():
@@ -804,6 +804,58 @@ def foundStudent():
     if res.isGood == False:
         return 'Bad request'
     return json.dumps(res.listRes, ensure_ascii=False)
+
+@app.route("/user/<idstr>")
+def foundUser(idstr):
+    id = 0
+    try:
+        id = int(idstr)
+    except Exception:
+        return 'Bad user ID, user not found!'
+
+    iam = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
+    if iam == None:
+        resp = make_response(redirect("/"))
+        resp.set_cookie('token', '', expires = 0)
+        resp.set_cookie('citycode', '', expires = 0)
+        return resp
+    
+    _filter = {}
+    _filter.update({'ID': id})
+
+    user = WorkWithDB.FoundUserInDatabaseForID(idstr)
+
+    if user == None:
+        return 'Bad user ID, user not found!'
+    
+    if user['Фотография'] == 'Стандарт':
+        photo = "https://api.adorable.io/avatars/234/" + str(user['ID'])
+    else:
+        photo = "/images/" + str(user['ID']) + ".png"
+    if user['Роль'] == 'Репетитор':
+        lessons = ''
+        for les in user['Преподаваемые_предметы']:
+            lessons += '<br>' + les
+        htmlLessons = Markup(lessons)
+        formatLessons = ''
+        for forLes in user['Формат_занятий']:
+            formatLessons += '<br>' + forLes
+        htmlFormatLessons = Markup(formatLessons)
+        viewsLessons = ''
+        for viewLes in user['Вид_занятий']:
+            viewsLessons += '<br>' + viewLes
+        htmlViewsLessons = Markup(viewsLessons)
+        return render_template("tutorProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = str(user['Стаж_преподавания_в_годах']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, FormatLessons = htmlFormatLessons, ViewsLessons = htmlViewsLessons, Price = str(user['Ставка_в_час']), Photo = photo, Button = "Написать сообщение", DoCode = "alert('Заглушечка')")
+    else:
+        lessons = ''
+        for les in user['Изучаемые_предметы']:
+            lessons += '<br>' + les
+        htmlLessons = Markup(lessons)
+        formatLes = ''
+        for Fles in user['Формат_занятий']:
+            formatLes += '<br>' + Fles
+        htmlFormat = Markup(formatLes)
+        return render_template("studentProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], SchoolClass = str(user['Класс']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Format = htmlFormat, Photo = photo, Button = "Написать сообщение", DoCode = "alert('Заглушечка')")
 
 if __name__ == "__main__":
     app.run()

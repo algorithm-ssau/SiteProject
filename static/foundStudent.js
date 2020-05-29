@@ -4,7 +4,6 @@ function foundStudent() {
     var request = new XMLHttpRequest();
     let prefab;
     let result = '';
-    let counter = 1;
     let url = '/api/found/student/?city=';
     requestAPI.onreadystatechange = function(){
         if(requestAPI.readyState == 4 && requestAPI.status == 200){
@@ -119,8 +118,7 @@ function foundStudent() {
 
     function addStudent(student){
         newPrefab = prefab.substring(0);
-        newPrefab = newPrefab.replace('{{NUMBER}}', counter.toString());
-        counter++;
+        newPrefab = newPrefab.replace('{{URL}}', '/user/' + student['ID']);
         newPrefab = newPrefab.replace('{{LASTNAME}}', student['Фамилия']);
         newPrefab = newPrefab.replace('{{FIRSTNAME}}', student['Имя']);
         newPrefab = newPrefab.replace('{{CLASS}}', student['Класс']);
