@@ -812,6 +812,13 @@ def foundUser(idstr):
         id = int(idstr)
     except Exception:
         return 'Bad user ID, user not found!'
+
+    iam = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
+    if user == None:
+        resp = make_response(redirect("/"))
+        resp.set_cookie('token', '', expires = 0)
+        resp.set_cookie('citycode', '', expires = 0)
+        return resp
     
     _filter = {}
     _filter.update({'ID': id})
