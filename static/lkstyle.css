@@ -138,6 +138,8 @@ input[type=text], input[type=password], input[type=number], input[type=tel], inp
   border: none;
   background: #f1f1f1;
   outline: none;
+  font-family: Roboto;
+  resize: none;
 }
 
 input[type=text]:focus, input[type=password]:focus, input[type=number]:focus, input[type=tel]:focus, input[type=date]:focus, select:focus, textarea:focus {
@@ -145,10 +147,16 @@ input[type=text]:focus, input[type=password]:focus, input[type=number]:focus, in
   outline: none;
 }
 
+textarea {
+  margin: 0 !important;
+}
+
 .searchbtn,
 .updatebtn,
 .savebtn,
-.newphoto {
+.newphoto,
+.createbtn,
+.changebtn {
   background-color: #4CAF50;
   color: white;
   padding: 16px 20px;
@@ -160,7 +168,7 @@ input[type=text]:focus, input[type=password]:focus, input[type=number]:focus, in
   outline: none;
 }
 
-.updatebtn:hover, .searchbtn:hover, .savebtn:hover, .newphoto:hover {
+.updatebtn:hover, .searchbtn:hover, .savebtn:hover, .newphoto:hover, .createbtn:hover, .changebtn:hover {
   opacity:1;
   outline: none;
 }
@@ -319,4 +327,49 @@ input[type=text]:focus, input[type=password]:focus, input[type=number]:focus, in
 .input-file + .js-labelFile.has-file .icon:before {
   content:"\f00c";
   color:#5AAC7B;
+}
+
+#back {
+  width: 800px;
+  height: auto;
+  position: absolute;
+  top: 100px;
+  left: 21%;
+}
+
+table {
+  font-family: Roboto;
+  text-align: center;
+  width: 100%; 
+  border-collapse: collapse;
+  height:100px;
+  padding: 0;
+}
+
+table thead tr {
+  color: #ffffff;  
+  background: #64B5F6;
+}
+
+table thead tr td {
+  border: 1px solid #1976D2;
+}
+
+table tbody tr td {
+  border: 1px solid #e8e9eb;
+}
+
+table tbody tr:nth-child(2n) {
+  background: #fff;
+  height: 42px;
+}
+
+table tbody tr:hover {
+  background: #ebffe8;
+}
+
+.schedule {
+  position: absolute;
+  top: 150px;
+  left: 36%;
 }

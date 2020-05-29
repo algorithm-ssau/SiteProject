@@ -47,8 +47,35 @@
       <input type="button" value="Выход" class="exitbtn" onclick="exitOnProfile();"> 
     </div>
 
-    <div class="welcome">
-      <img id="back" src="static\welcome.png">
+    <div class="schedule">
+      <table>
+        <thead>
+          <tr>
+            <td>Дата</td>
+            <td>Занятие</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><textarea name="date" style="width: 150px"></textarea></td>
+            <td><textarea name="lesson" style="width: 150px"></textarea></td>
+          </tr>
+          <tr>
+            <td><textarea name="date" style="width: 150px"></textarea></td>
+            <td><textarea name="lesson" style="width: 150px"></textarea></td>
+          </tr>
+          <tr>
+            <td><textarea name="date" style="width: 150px"></textarea></td>
+            <td><textarea name="lesson" style="width: 150px"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="create">
+        <input type="button" value="Добавить запись" class="createbtn"> 
+      </div>
+      <div class="save_change">
+        <input type="button" value="Сохранить" class="changebtn"> 
+      </div>
     </div>
     
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
