@@ -704,3 +704,38 @@ class WorkWithDB():
             res.setErrorMessage("Ошибка выполнения операции.")
         
         return res
+
+    @staticmethod
+    def FoundUserInDatabaseForID(idUser):
+        res = Result(False, '', [])
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+            collect = db['Tokens']
+
+            doc = dict(collect.find_one({'ID': int(idUser)}))
+
+            city = doc['Город']
+            nameCollect = ''
+            user = {'':''}
+
+            try:
+                nameCollect = city+'teachers'
+                collect = db[nameCollect]
+
+                user = collect.find_one({'ID': int(idUser)})
+
+            except:
+                nameCollect = city+'students'
+                collect = db[nameCollect]
+
+                user = collect.find_one({'ID': int(idUser)})
+
+            res.setErrorMessage(user)
+            res.setIsGoodVariable(True)
+
+        except Exception:
+            res.setErrorMessage("Ошибка выполнения операции.")
+            res.setIsGoodVariable(False)
+        
+        return res
