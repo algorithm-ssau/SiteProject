@@ -119,8 +119,6 @@ header h1::before {
   position: absolute;
   left:250px;
   top: 120px;
-  width: 250px;
-  height: 250px;
 }
 
 .info {
