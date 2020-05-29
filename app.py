@@ -814,7 +814,7 @@ def foundUser(idstr):
         return 'Bad user ID, user not found!'
 
     iam = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
-    if user == None:
+    if iam == None:
         resp = make_response(redirect("/"))
         resp.set_cookie('token', '', expires = 0)
         resp.set_cookie('citycode', '', expires = 0)
