@@ -816,7 +816,7 @@ def foundUser(idstr):
     _filter = {}
     _filter.update({'ID': id})
 
-    ##user=
+    user = WorkWithDB.FoundUserInDatabaseForID(idstr)
 
     if user == None:
         return 'Bad user ID, user not found!'

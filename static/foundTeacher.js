@@ -144,6 +144,7 @@ function foundTeacher() {
 
     function addTeacher(teacher){
         newPrefab = prefab.substring(0);
+        newPrefab = newPrefab.replace('{{URL}}', '/user/' + teacher['ID']);
         newPrefab = newPrefab.replace('{{LASTNAME}}', teacher['Фамилия']);
         newPrefab = newPrefab.replace('{{FIRSTNAME}}', teacher['Имя']);
         newPrefab = newPrefab.replace('{{EDUCATION}}', teacher['Образование']);

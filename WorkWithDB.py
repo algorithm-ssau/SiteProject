@@ -707,7 +707,6 @@ class WorkWithDB():
 
     @staticmethod
     def FoundUserInDatabaseForID(idUser):
-        res = Result(False, '', [])
         try:
             client = MongoClient()
             db = client['UsersDB']
@@ -715,13 +714,14 @@ class WorkWithDB():
 
             doc = dict(collect.find_one({'ID': int(idUser)}))
 
+            if doc == None:
+                return None
+
             city = doc['Город']
             role = doc['Роль']
             nameCollect = ''
-            user = {'':''}
 
             if(role == 'Ученик'):
-
                 nameCollect = city+'students'
             else:
                 nameCollect = city+'teachers'
@@ -729,11 +729,7 @@ class WorkWithDB():
             collect = db[nameCollect]
             user = collect.find_one({'ID': int(idUser)})    
 
-            res.setErrorMessage(user)
-            res.setIsGoodVariable(True)
-
         except Exception:
-            res.setErrorMessage("Ошибка выполнения операции.")
-            res.setIsGoodVariable(False)
+            return None
         
-        return res
+        return user
