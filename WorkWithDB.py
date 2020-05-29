@@ -613,3 +613,94 @@ class WorkWithDB():
             res.setErrorMessage("Ошибка выполнения операции.")
 
         return res
+
+    @staticmethod
+    def getNewIDforNote():
+        try:
+            newID = 0
+            client = MongoClient()
+            db = client['UsersDB']
+
+            try:
+                collect = db['IDNote']
+            except:
+                db.create_collection('IDNote')
+                collect = db['IDNote']
+
+            if collect.estimated_document_count()==0:
+                collect.insert_one({'ID':0})
+                newID=0
+            else:
+                newID = int(collect.find().sort('ID', -1)[0].get('ID'))+1
+                collect.update_one({'ID':int(newID-1)},{'$set' : {'ID': newID}})
+
+        except:
+            message = 'Ошибка'
+
+        return newID
+
+    @staticmethod
+    def NewNode(user):
+        res = Result(False," ",[])
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+
+            try:
+                collect = db['Notes']
+            except:
+                db.create_collection('Notes')
+                collect = db['Notes']
+
+            user['idNote'] = int(WorkWithDB.getNewIDforNote())
+            collect.insert_one(user)
+
+            res.setErrorMessage("Операция выполнена успешно")
+            res.setIsGoodVariable(True)
+
+        except Exception:
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
+
+        return res
+
+    @staticmethod
+    def UpdateNode(newNote):
+        res = Result(False, '', [])
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+            collect = db['Notes']
+
+            idNote =int(newNote['idNote'])
+
+            doc = dict(collect.find_one({'idNote': idNote}))
+            collect.update_one(doc, {'$set': newNote})
+
+            res.setErrorMessage("Операция выполнена успешно")
+            res.setIsGoodVariable(True)
+
+        except Exception:
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
+
+        return res
+
+    @staticmethod
+    def DeleteNote(doc):
+        res = Result(False, '', [])
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+            collect = db['Notes']
+
+            collect.delete_one(doc)
+
+            res.setErrorMessage("Операция выполнена успешно")
+            res.setIsGoodVariable(True)
+
+        except Exception:
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
+        
+        return res
