@@ -716,20 +716,18 @@ class WorkWithDB():
             doc = dict(collect.find_one({'ID': int(idUser)}))
 
             city = doc['Город']
+            role = doc['Роль']
             nameCollect = ''
             user = {'':''}
 
-            try:
-                nameCollect = city+'teachers'
-                collect = db[nameCollect]
+            if(role == 'Ученик'):
 
-                user = collect.find_one({'ID': int(idUser)})
-
-            except:
                 nameCollect = city+'students'
-                collect = db[nameCollect]
-
-                user = collect.find_one({'ID': int(idUser)})
+            else:
+                nameCollect = city+'teachers'
+                       
+            collect = db[nameCollect]
+            user = collect.find_one({'ID': int(idUser)})    
 
             res.setErrorMessage(user)
             res.setIsGoodVariable(True)
