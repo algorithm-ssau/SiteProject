@@ -427,6 +427,26 @@ class WorkWithDB():
 
         return res
 
+
+    @staticmethod
+    def foundAllUsersDialog(IDuser):
+        res = []
+        connection = MongoClient()
+        db = connection['UsersDB']
+        listDialogs = db.list_collection_names()
+        inputstr1 = str(IDuser) + 'and'
+        inputstr2 = 'and' + str(IDuser)
+        for collname in listDialogs:
+            if collname.find(inputstr1) != -1:
+                strtemp = collname.replace(inputstr1, '')
+                res.append(int(strtemp))
+            if collname.find(inputstr2) != -1:
+                strtemp = collname.replace(inputstr2, '')
+                res.append(int(strtemp))
+        if len(res) == 0:
+            return None
+        return res
+
     @staticmethod
     def createNewDialog(IDuser1, IDuser2):
         res = Result(False," ",[])

@@ -397,3 +397,8 @@ table tbody tr:hover {
   top: 150px;
   left: 36%;
 }
+
+.usersinmessager{
+  width: 55px;
+  height: 55px;
+}
