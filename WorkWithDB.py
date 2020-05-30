@@ -465,52 +465,21 @@ class WorkWithDB():
 
 
     @staticmethod
-    def sendMessege(IDuserFrom, IDuserTo, message, sity):
+    def sendMessege(IDuserFrom, IDuserTo, message):
         res = Result(False," ",[])
         try:
-            data = time.ctime(int(requests.get("https://time100.ru/api").text))
+            data = time.ctime(int(requests.get("https://time100.ru/api").text)) + ' (Samara Time)'
             client = MongoClient()
             db = client['UsersDB']
             listID = [IDuserFrom, IDuserTo]
             listID.sort()
             nameCollect = str(listID[0])+'and'+str(listID[1])
 
-            try:
-                userColl = db[str(sity+'teachers')]
-                nameFrom = ''
+            collect = db[nameCollect]
+            collect.insert_one({'Сообщение':message, 'От':IDuserFrom, 'Дата и время':data})
 
-                if(userColl.find_one({'ID': IDuserFrom})):
-                    doc = dict(userColl.find_one({'ID': IDuserFrom}))
-                    nameFrom = doc.get('Имя')
-                else:
-                    userColl = db[str(sity+'students')]
-                    doc = dict(userColl.find_one({'ID': IDuserFrom}))
-                    nameFrom = doc.get('Имя')
-
-                collect = db[nameCollect]
-                collect.insert_one({'Сообщение':message, 'От':nameFrom, 'Дата и время':data})
-
-                res.setIsGoodVariable(True)
-                res.setErrorMessage("Операция выполнена успешно.")
-
-            except:
-                WorkWithDB.createNewDialog(IDuserFrom, IDuserTo)
-                userColl = db[str(sity+'teachers')]
-                nameFrom = ''
-
-                if(userColl.find_one({'ID': IDuserFrom})):
-                    doc = dict(userColl.find_one({'ID': IDuserFrom}))
-                    nameFrom = doc.get('Имя')
-                else:
-                    userColl = db[str(sity+'students')]
-                    doc = dict(userColl.find_one({'ID': IDuserFrom}))
-                    nameFrom = doc.get('Имя')
-
-                collect = db[nameCollect]
-                collect.insert_one({'Сообщение':message, 'От':nameFrom, 'Дата и время':data})
-
-                res.setIsGoodVariable(True)
-                res.setErrorMessage("Операция выполнена успешно.")
+            res.setIsGoodVariable(True)
+            res.setErrorMessage("Операция выполнена успешно.")
 
         except Exception:
             res.setIsGoodVariable(False)
