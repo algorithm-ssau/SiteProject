@@ -980,6 +980,19 @@ def dialog():
         WorkWithDB.createNewDialog(id1, id2)
     return redirect('/messages?to='+str(id2))
 
+@app.route("/timetable/")
+def timetable():
+    user = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
+    if user == None:
+        resp = make_response(redirect("/"))
+        resp.set_cookie('token', '', expires = 0)
+        resp.set_cookie('citycode', '', expires = 0)
+        return resp
+    if user['Роль'] == 'Репетитор':
+        return render_template("tutorSchedule.html")
+    else:
+        return render_template("studentSchedule.html")
+
 @app.route("/user/<idstr>")
 def foundUser(idstr):
     id = 0
