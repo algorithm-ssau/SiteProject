@@ -724,6 +724,13 @@ def templatestudent():
     f.close()
     return text
 
+@app.route("/prefabs/timetable")
+def templatetimetable():
+    f = codecs.open('static/prefabs/prefabSchedule.html', encoding='utf-8', mode='r')
+    text = f.read()
+    f.close()
+    return text
+
 @app.route("/api/sendmessage", methods=["post"])
 def sendmess():
     message = request.form.get('mes')
@@ -732,8 +739,8 @@ def sendmess():
     user = WorkWithDB.FoundUserInDatabaseForToken(fromtoken)
     if user != None:
         WorkWithDB.sendMessege(user['ID'], int(toid), message)
-        return '1';
-    return '0';
+        return '1'
+    return '0'
 
 @app.route("/api/getmessagesize")
 def getmessagesize():
@@ -743,7 +750,37 @@ def getmessagesize():
     if user != None:
         mes = WorkWithDB.getMessage(999, user['ID'], int(toid)).listRes
         return str(len(mes));
-    return '-1';
+    return '-1'
+
+@app.route("/api/newnote")
+def newnoteapi():
+    token = request.args.get('token')
+    user = WorkWithDB.FoundUserInDatabaseForToken(token)
+    if user != None:
+        node = {'ID': user['ID']}
+        node.update({'Дата': ''})
+        node.update({'Предмет': ''})
+        return(WorkWithDB.NewNode(node).getErrorMessage())
+    return '-1'
+
+@app.route("/api/savenotes", methods=["post"])
+def savenoteapi():
+    token = request.form.get('token')
+    user = WorkWithDB.FoundUserInDatabaseForToken(token)
+    if user != None:
+        nodes = WorkWithDB.FindNode(user['ID']).listRes
+        for node in nodes:
+            idnow = node['idNote']
+            date = request.form.get('date_'+str(idnow))
+            mes = request.form.get('lesson_'+str(idnow))
+            if date == '' and mes == '':
+                WorkWithDB.DeleteNote(node)
+                continue
+            node['Дата'] = date
+            node['Предмет'] = mes
+            WorkWithDB.UpdateNode(node)
+        return '0'
+    return '-1'
 
 @app.route("/api/found/teacher/")
 def foundTeacher():
@@ -988,10 +1025,29 @@ def timetable():
         resp.set_cookie('token', '', expires = 0)
         resp.set_cookie('citycode', '', expires = 0)
         return resp
+    
+    tables = WorkWithDB.FindNode(user['ID']).listRes
+
+    res = ''
+
+    if len(tables) != 0:
+        f = codecs.open('static/prefabs/prefabSchedule.html', encoding='utf-8', mode='r')
+        prefab = f.read()
+        f.close()
+
+        for rec in tables:
+            pref = prefab
+            pref = pref.replace('{{DATE}}', rec['Дата'])
+            pref = pref.replace('{{TASK}}', rec['Предмет'])
+            pref = pref.replace('{{DATEID}}', str(rec['idNote']))
+            pref = pref.replace('{{LESSONID}}', str(rec['idNote']))
+            res += pref
+    
+
     if user['Роль'] == 'Репетитор':
-        return render_template("tutorSchedule.html")
+        return render_template("tutorSchedule.html", REC = Markup(res))
     else:
-        return render_template("studentSchedule.html")
+        return render_template("studentSchedule.html", REC = Markup(res))
 
 @app.route("/user/<idstr>")
 def foundUser(idstr):
