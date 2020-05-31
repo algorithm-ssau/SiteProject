@@ -561,10 +561,154 @@ def messages():
         resp.set_cookie('token', '', expires = 0)
         resp.set_cookie('citycode', '', expires = 0)
         return resp
+    ids = WorkWithDB.foundAllUsersDialog(user['ID'])
+    resUSERS = ''
     if user['Роль'] == 'Репетитор':
-        return render_template("tutorMessages.html")
+        if ids != None and len(ids) != 0:
+            f = codecs.open('static/prefabs/prefabUserInTutorDialogs.html', encoding='utf-8', mode='r')
+            prefab = f.read()
+            f.close()
+            for idUser in ids:
+                prefabTEMP = prefab
+                userM = WorkWithDB.FoundUserInDatabaseForID(idUser)
+                if userM['Фотография'] == 'Стандарт':
+                    photo = "https://api.adorable.io/avatars/234/" + str(userM['ID'])
+                else:
+                    photo = "/images/" + str(userM['ID']) + ".png"
+                prefabTEMP = prefabTEMP.replace('{{PHOTO}}', photo)
+                name = userM['Фамилия'] + ' ' + userM['Имя'][0] + '.'
+                prefabTEMP = prefabTEMP.replace('{{NAME}}', name)
+                prefabTEMP = prefabTEMP.replace('{{URL}}', '/messages?to=' + str(userM['ID']))
+                resUSERS += prefabTEMP
+        idnow = request.args.get('to')
+        userinfo = ''
+        counter = ''
+        photo2 = '<img class="usersinmessager" src="{{PHOTO}}">'
+
+        f = codecs.open('static/prefabs/prefabUserMessageInfo.html', encoding='utf-8', mode='r')
+        prefab = f.read()
+        f.close()
+
+        allMessages = ''
+
+        toid = -1
+        
+        if idnow == None:
+            userinfo = 'Выберите собеседника'
+            counter = 'слева'
+            photo2 = ''
+        else:
+            userM = WorkWithDB.FoundUserInDatabaseForID(idnow)
+            toid = userM['ID']
+            messages = WorkWithDB.getMessage(999, user['ID'], int(idnow)).listRes
+            userinfo = 'Чат с ' + userM['Фамилия'] + ' ' + userM['Имя']
+            counter = 'Всего ' + str(len(messages)) + ' сообщений'
+            if userM['Фотография'] == 'Стандарт':
+                photo2 = photo2.replace('{{PHOTO}}', "https://api.adorable.io/avatars/234/" + str(userM['ID']))
+            else:
+                photo2 = photo2.replace('{{PHOTO}}', "/images/" + str(userM['ID']) + ".png")
+            if len(messages) != 0:
+                messages.reverse()
+                f = codecs.open('static/prefabs/prefabmesend.html', encoding='utf-8', mode='r')
+                prefabme = f.read()
+                f.close()
+                f = codecs.open('static/prefabs/prefabIsend.html', encoding='utf-8', mode='r')
+                prefabI = f.read()
+                f.close()
+                for mes in messages:
+                    if mes['От'] == user['ID']:
+                        prefabTEMP = prefabI
+                        prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
+                        prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
+                    else:
+                        prefabTEMP = prefabme
+                        prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
+                        prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
+                        prefabTEMP = prefabTEMP.replace('{{NAME}}', userM['Имя'])
+                    allMessages += prefabTEMP
+
+
+        
+        
+        prefab = prefab.replace('{{WITH}}', userinfo)
+        prefab = prefab.replace('{{COUNT}}', counter)
+        prefab = prefab.replace('{{PHOTO}}', photo2)
+        userNow = prefab
+
+
+            
+        return render_template("tutorMessages.html", USERS = Markup(resUSERS), ItUser = Markup(userNow), MESSAGES = Markup(allMessages), TOID = toid)
     else:
-        return render_template("studentMessages.html")
+        if ids != None and len(ids) != 0:
+            f = codecs.open('static/prefabs/prefabUserInStudentDialogs.html', encoding='utf-8', mode='r')
+            prefab = f.read()
+            f.close()
+            for idUser in ids:
+                prefabTEMP = prefab
+                userM = WorkWithDB.FoundUserInDatabaseForID(idUser)
+                if userM['Фотография'] == 'Стандарт':
+                    photo = "https://api.adorable.io/avatars/234/" + str(userM['ID'])
+                else:
+                    photo = "/images/" + str(userM['ID']) + ".png"
+                prefabTEMP = prefabTEMP.replace('{{PHOTO}}', photo)
+                name = userM['Фамилия'] + ' ' + userM['Имя'][0] + '.'
+                prefabTEMP = prefabTEMP.replace('{{NAME}}', name)
+                prefabTEMP = prefabTEMP.replace('{{URL}}', '/messages?to=' + str(userM['ID']))
+                resUSERS += prefabTEMP
+
+        idnow = request.args.get('to')
+        userinfo = ''
+        counter = ''
+        photo2 = '<img class="usersinmessager" src="{{PHOTO}}">'
+
+        f = codecs.open('static/prefabs/prefabUserMessageInfo.html', encoding='utf-8', mode='r')
+        prefab = f.read()
+        f.close()
+        
+        allMessages = ''
+
+        toid = -1
+
+        if idnow == None:
+            userinfo = 'Выберите собеседника'
+            counter = 'слева'
+            photo2 = ''
+        else:
+            userM = WorkWithDB.FoundUserInDatabaseForID(idnow)
+            toid = userM['ID']
+            messages = WorkWithDB.getMessage(999, user['ID'], int(idnow)).listRes
+            userinfo = 'Чат с ' + userM['Фамилия'] + ' ' + userM['Имя']
+            counter = 'Всего ' + str(len(messages)) + ' сообщений'
+            if userM['Фотография'] == 'Стандарт':
+                photo2 = photo2.replace('{{PHOTO}}', "https://api.adorable.io/avatars/234/" + str(userM['ID']))
+            else:
+                photo2 = photo2.replace('{{PHOTO}}', "/images/" + str(userM['ID']) + ".png")
+
+            if len(messages) != 0:
+                messages.reverse()
+                f = codecs.open('static/prefabs/prefabmesend.html', encoding='utf-8', mode='r')
+                prefabme = f.read()
+                f.close()
+                f = codecs.open('static/prefabs/prefabIsend.html', encoding='utf-8', mode='r')
+                prefabI = f.read()
+                f.close()
+                for mes in messages:
+                    if mes['От'] == user['ID']:
+                        prefabTEMP = prefabI
+                        prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
+                        prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
+                    else:
+                        prefabTEMP = prefabme
+                        prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
+                        prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
+                        prefabTEMP = prefabTEMP.replace('{{NAME}}', userM['Имя'])
+                    allMessages += prefabTEMP
+        
+        prefab = prefab.replace('{{WITH}}', userinfo)
+        prefab = prefab.replace('{{COUNT}}', counter)
+        prefab = prefab.replace('{{PHOTO}}', photo2)
+        userNow = prefab
+        return render_template("studentMessages.html", USERS = Markup(resUSERS), ItUser = Markup(userNow), MESSAGES = Markup(allMessages), TOID = toid)
 
 @app.route("/prefabs/teacher")
 def templateteacher():
@@ -580,6 +724,26 @@ def templatestudent():
     f.close()
     return text
 
+@app.route("/api/sendmessage", methods=["post"])
+def sendmess():
+    message = request.form.get('mes')
+    fromtoken = request.form.get('token')
+    toid = request.form.get('to')
+    user = WorkWithDB.FoundUserInDatabaseForToken(fromtoken)
+    if user != None:
+        WorkWithDB.sendMessege(user['ID'], int(toid), message)
+        return '1';
+    return '0';
+
+@app.route("/api/getmessagesize")
+def getmessagesize():
+    token = request.args.get('token')
+    toid = request.args.get('toid')
+    user = WorkWithDB.FoundUserInDatabaseForToken(token)
+    if user != None:
+        mes = WorkWithDB.getMessage(999, user['ID'], int(toid)).listRes
+        return str(len(mes));
+    return '-1';
 
 @app.route("/api/found/teacher/")
 def foundTeacher():
@@ -805,6 +969,30 @@ def foundStudent():
         return 'Bad request'
     return json.dumps(res.listRes, ensure_ascii=False)
 
+@app.route("/dialog/")
+def dialog():
+    id1 = int(request.args.get('id1'))
+    id2 = int(request.args.get('id2'))
+    ids = WorkWithDB.foundAllUsersDialog(id1)
+    if ids != None and id2 in ids:
+        pass
+    else:
+        WorkWithDB.createNewDialog(id1, id2)
+    return redirect('/messages?to='+str(id2))
+
+@app.route("/timetable/")
+def timetable():
+    user = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
+    if user == None:
+        resp = make_response(redirect("/"))
+        resp.set_cookie('token', '', expires = 0)
+        resp.set_cookie('citycode', '', expires = 0)
+        return resp
+    if user['Роль'] == 'Репетитор':
+        return render_template("tutorSchedule.html")
+    else:
+        return render_template("studentSchedule.html")
+
 @app.route("/user/<idstr>")
 def foundUser(idstr):
     id = 0
@@ -812,11 +1000,18 @@ def foundUser(idstr):
         id = int(idstr)
     except Exception:
         return 'Bad user ID, user not found!'
+
+    iam = WorkWithDB.FoundUserInDatabaseForToken(request.cookies.get('token'))
+    if iam == None:
+        resp = make_response(redirect("/"))
+        resp.set_cookie('token', '', expires = 0)
+        resp.set_cookie('citycode', '', expires = 0)
+        return resp
     
     _filter = {}
     _filter.update({'ID': id})
 
-    ##user=
+    user = WorkWithDB.FoundUserInDatabaseForID(idstr)
 
     if user == None:
         return 'Bad user ID, user not found!'
@@ -825,6 +1020,9 @@ def foundUser(idstr):
         photo = "https://api.adorable.io/avatars/234/" + str(user['ID'])
     else:
         photo = "/images/" + str(user['ID']) + ".png"
+
+    messageURL = "document.location.href = '/dialog/?id1="+str(iam['ID'])+"&id2="+str(user['ID'])+"';";
+
     if user['Роль'] == 'Репетитор':
         lessons = ''
         for les in user['Преподаваемые_предметы']:
@@ -838,7 +1036,7 @@ def foundUser(idstr):
         for viewLes in user['Вид_занятий']:
             viewsLessons += '<br>' + viewLes
         htmlViewsLessons = Markup(viewsLessons)
-        return render_template("tutorProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = str(user['Стаж_преподавания_в_годах']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, FormatLessons = htmlFormatLessons, ViewsLessons = htmlViewsLessons, Price = str(user['Ставка_в_час']), Photo = photo, Button = "Написать сообщение", DoCode = "alert('Заглушечка')")
+        return render_template("tutorProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], Education = user['Образование'], Experions = str(user['Стаж_преподавания_в_годах']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, FormatLessons = htmlFormatLessons, ViewsLessons = htmlViewsLessons, Price = str(user['Ставка_в_час']), Photo = photo, Button = "Написать сообщение", DoCode = messageURL)
     else:
         lessons = ''
         for les in user['Изучаемые_предметы']:
@@ -848,7 +1046,7 @@ def foundUser(idstr):
         for Fles in user['Формат_занятий']:
             formatLes += '<br>' + Fles
         htmlFormat = Markup(formatLes)
-        return render_template("studentProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], SchoolClass = str(user['Класс']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Format = htmlFormat, Photo = photo, Button = "Написать сообщение", DoCode = "alert('Заглушечка')")
+        return render_template("studentProfile.html", LastName = user['Фамилия'], FirstName = user['Имя'], BirthDay = user['День_рождения'], SchoolClass = str(user['Класс']), Phone = user['Телефон'], About = user['О_себе'], Lessons = htmlLessons, Format = htmlFormat, Photo = photo, Button = "Написать сообщение", DoCode = messageURL)
 
 if __name__ == "__main__":
     app.run()

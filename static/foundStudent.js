@@ -118,6 +118,7 @@ function foundStudent() {
 
     function addStudent(student){
         newPrefab = prefab.substring(0);
+        newPrefab = newPrefab.replace('{{URL}}', '/user/' + student['ID']);
         newPrefab = newPrefab.replace('{{LASTNAME}}', student['Фамилия']);
         newPrefab = newPrefab.replace('{{FIRSTNAME}}', student['Имя']);
         newPrefab = newPrefab.replace('{{CLASS}}', student['Класс']);

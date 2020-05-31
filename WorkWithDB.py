@@ -427,6 +427,26 @@ class WorkWithDB():
 
         return res
 
+
+    @staticmethod
+    def foundAllUsersDialog(IDuser):
+        res = []
+        connection = MongoClient()
+        db = connection['UsersDB']
+        listDialogs = db.list_collection_names()
+        inputstr1 = str(IDuser) + 'and'
+        inputstr2 = 'and' + str(IDuser)
+        for collname in listDialogs:
+            if collname.find(inputstr1) != -1:
+                strtemp = collname.replace(inputstr1, '')
+                res.append(int(strtemp))
+            if collname.find(inputstr2) != -1:
+                strtemp = collname.replace(inputstr2, '')
+                res.append(int(strtemp))
+        if len(res) == 0:
+            return None
+        return res
+
     @staticmethod
     def createNewDialog(IDuser1, IDuser2):
         res = Result(False," ",[])
@@ -445,52 +465,21 @@ class WorkWithDB():
 
 
     @staticmethod
-    def sendMessege(IDuserFrom, IDuserTo, message, sity):
+    def sendMessege(IDuserFrom, IDuserTo, message):
         res = Result(False," ",[])
         try:
-            data = time.ctime(int(requests.get("https://time100.ru/api").text))
+            data = time.ctime(int(requests.get("https://time100.ru/api").text)) + ' (Samara Time)'
             client = MongoClient()
             db = client['UsersDB']
             listID = [IDuserFrom, IDuserTo]
             listID.sort()
             nameCollect = str(listID[0])+'and'+str(listID[1])
 
-            try:
-                userColl = db[str(sity+'teachers')]
-                nameFrom = ''
+            collect = db[nameCollect]
+            collect.insert_one({'Сообщение':message, 'От':IDuserFrom, 'Дата и время':data})
 
-                if(userColl.find_one({'ID': IDuserFrom})):
-                    doc = dict(userColl.find_one({'ID': IDuserFrom}))
-                    nameFrom = doc.get('Имя')
-                else:
-                    userColl = db[str(sity+'students')]
-                    doc = dict(userColl.find_one({'ID': IDuserFrom}))
-                    nameFrom = doc.get('Имя')
-
-                collect = db[nameCollect]
-                collect.insert_one({'Сообщение':message, 'От':nameFrom, 'Дата и время':data})
-
-                res.setIsGoodVariable(True)
-                res.setErrorMessage("Операция выполнена успешно.")
-
-            except:
-                WorkWithDB.createNewDialog(IDuserFrom, IDuserTo)
-                userColl = db[str(sity+'teachers')]
-                nameFrom = ''
-
-                if(userColl.find_one({'ID': IDuserFrom})):
-                    doc = dict(userColl.find_one({'ID': IDuserFrom}))
-                    nameFrom = doc.get('Имя')
-                else:
-                    userColl = db[str(sity+'students')]
-                    doc = dict(userColl.find_one({'ID': IDuserFrom}))
-                    nameFrom = doc.get('Имя')
-
-                collect = db[nameCollect]
-                collect.insert_one({'Сообщение':message, 'От':nameFrom, 'Дата и время':data})
-
-                res.setIsGoodVariable(True)
-                res.setErrorMessage("Операция выполнена успешно.")
+            res.setIsGoodVariable(True)
+            res.setErrorMessage("Операция выполнена успешно.")
 
         except Exception:
             res.setIsGoodVariable(False)
@@ -707,7 +696,6 @@ class WorkWithDB():
 
     @staticmethod
     def FoundUserInDatabaseForID(idUser):
-        res = Result(False, '', [])
         try:
             client = MongoClient()
             db = client['UsersDB']
@@ -715,13 +703,14 @@ class WorkWithDB():
 
             doc = dict(collect.find_one({'ID': int(idUser)}))
 
+            if doc == None:
+                return None
+
             city = doc['Город']
             role = doc['Роль']
             nameCollect = ''
-            user = {'':''}
 
             if(role == 'Ученик'):
-
                 nameCollect = city+'students'
             else:
                 nameCollect = city+'teachers'
@@ -729,11 +718,7 @@ class WorkWithDB():
             collect = db[nameCollect]
             user = collect.find_one({'ID': int(idUser)})    
 
-            res.setErrorMessage(user)
-            res.setIsGoodVariable(True)
-
         except Exception:
-            res.setErrorMessage("Ошибка выполнения операции.")
-            res.setIsGoodVariable(False)
+            return None
         
-        return res
+        return user
