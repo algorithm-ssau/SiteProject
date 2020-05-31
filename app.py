@@ -62,6 +62,11 @@ def welcome():
             return render_template("welcomeTutor.html")
         else:
             return render_template("welcomeStudent.html")
+    else:
+        resp = make_response(redirect("/"))
+        resp.set_cookie('token', '', expires = 0)
+        resp.set_cookie('citycode', '', expires = 0)
+        return resp
 
     
 @app.route("/newstudent", methods=["post", "get"])
