@@ -629,7 +629,7 @@ class WorkWithDB():
         return newID
 
     @staticmethod
-    def NewNode(user):
+    def NewNode(note):
         res = Result(False," ",[])
         try:
             client = MongoClient()
@@ -641,8 +641,8 @@ class WorkWithDB():
                 db.create_collection('Notes')
                 collect = db['Notes']
 
-            user['idNote'] = int(WorkWithDB.getNewIDforNote())
-            collect.insert_one(user)
+            note['idNote'] = int(WorkWithDB.getNewIDforNote())
+            collect.insert_one(note)
 
             res.setErrorMessage("Операция выполнена успешно")
             res.setIsGoodVariable(True)
@@ -652,6 +652,31 @@ class WorkWithDB():
             res.setErrorMessage("Ошибка выполнения операции.")
 
         return res
+
+    @staticmethod
+    def FindNode(idUser):
+        listNotes = []
+        res = Result(False, '',[])
+        try:
+            client = MongoClient()
+            db = client['UsersDB']
+            collect = db['Notes']
+
+            cursorUser = collect.find({'ID':int(idUser)})
+
+            for doc in cursorUser:
+                listNotes.append(dict(doc))
+
+            res.setErrorMessage('Операция выполнена успешно.')
+            res.setList(listNotes)
+            res.setErrorMessage(True)
+
+        except Exception:
+            res.setIsGoodVariable(False)
+            res.setErrorMessage("Ошибка выполнения операции.")
+            
+        return res
+
 
     @staticmethod
     def UpdateNode(newNote):
