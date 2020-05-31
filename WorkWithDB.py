@@ -437,10 +437,10 @@ class WorkWithDB():
         inputstr1 = str(IDuser) + 'and'
         inputstr2 = 'and' + str(IDuser)
         for collname in listDialogs:
-            if collname.find(inputstr1) != -1:
+            if collname.find(inputstr1) != -1 and collname[0:len(inputstr1)] == inputstr1:
                 strtemp = collname.replace(inputstr1, '')
                 res.append(int(strtemp))
-            if collname.find(inputstr2) != -1:
+            if collname.find(inputstr2) != -1 and collname[len(collname)-len(inputstr2):len(collname)] == inputstr2:
                 strtemp = collname.replace(inputstr2, '')
                 res.append(int(strtemp))
         if len(res) == 0:
@@ -644,8 +644,9 @@ class WorkWithDB():
             note['idNote'] = int(WorkWithDB.getNewIDforNote())
             collect.insert_one(note)
 
-            res.setErrorMessage("Операция выполнена успешно")
+            res.setErrorMessage(str(note['idNote']))
             res.setIsGoodVariable(True)
+
 
         except Exception:
             res.setIsGoodVariable(False)

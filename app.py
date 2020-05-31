@@ -9,6 +9,7 @@ from flask import (
     Markup,
 )
 from WorkWithDB import WorkWithDB, Result
+from bot import BotGraf
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = './static/ProfilesImages/'
@@ -569,6 +570,8 @@ def messages():
             prefab = f.read()
             f.close()
             for idUser in ids:
+                if idUser == -100:
+                    continue
                 prefabTEMP = prefab
                 userM = WorkWithDB.FoundUserInDatabaseForID(idUser)
                 if userM['Фотография'] == 'Стандарт':
@@ -580,6 +583,17 @@ def messages():
                 prefabTEMP = prefabTEMP.replace('{{NAME}}', name)
                 prefabTEMP = prefabTEMP.replace('{{URL}}', '/messages?to=' + str(userM['ID']))
                 resUSERS += prefabTEMP
+
+        #БОТ:
+        prefabTEMP = prefab
+        photo = "/images/bot.jpg"
+        prefabTEMP = prefabTEMP.replace('{{PHOTO}}', photo)
+        name = "Бот Тимоха"
+        prefabTEMP = prefabTEMP.replace('{{NAME}}', name)
+        prefabTEMP = prefabTEMP.replace('{{URL}}', '/messages?to=bot')
+        resUSERS += prefabTEMP
+        #/БОТ
+        
         idnow = request.args.get('to')
         userinfo = ''
         counter = ''
@@ -598,34 +612,60 @@ def messages():
             counter = 'слева'
             photo2 = ''
         else:
-            userM = WorkWithDB.FoundUserInDatabaseForID(idnow)
-            toid = userM['ID']
-            messages = WorkWithDB.getMessage(999, user['ID'], int(idnow)).listRes
-            userinfo = 'Чат с ' + userM['Фамилия'] + ' ' + userM['Имя']
-            counter = 'Всего ' + str(len(messages)) + ' сообщений'
-            if userM['Фотография'] == 'Стандарт':
-                photo2 = photo2.replace('{{PHOTO}}', "https://api.adorable.io/avatars/234/" + str(userM['ID']))
+            if idnow != 'bot':
+                userM = WorkWithDB.FoundUserInDatabaseForID(idnow)
+                toid = userM['ID']
+                messages = WorkWithDB.getMessage(999, user['ID'], int(idnow)).listRes
+                userinfo = 'Чат с ' + userM['Фамилия'] + ' ' + userM['Имя']
+                counter = 'Всего ' + str(len(messages)) + ' сообщений'
+                if userM['Фотография'] == 'Стандарт':
+                    photo2 = photo2.replace('{{PHOTO}}', "https://api.adorable.io/avatars/234/" + str(userM['ID']))
+                else:
+                    photo2 = photo2.replace('{{PHOTO}}', "/images/" + str(userM['ID']) + ".png")
+                if len(messages) != 0:
+                    messages.reverse()
+                    f = codecs.open('static/prefabs/prefabmesend.html', encoding='utf-8', mode='r')
+                    prefabme = f.read()
+                    f.close()
+                    f = codecs.open('static/prefabs/prefabIsend.html', encoding='utf-8', mode='r')
+                    prefabI = f.read()
+                    f.close()
+                    for mes in messages:
+                        if mes['От'] == user['ID']:
+                            prefabTEMP = prefabI
+                            prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
+                            prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
+                        else:
+                            prefabTEMP = prefabme
+                            prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
+                            prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
+                            prefabTEMP = prefabTEMP.replace('{{NAME}}', userM['Имя'])
+                        allMessages += prefabTEMP
             else:
-                photo2 = photo2.replace('{{PHOTO}}', "/images/" + str(userM['ID']) + ".png")
-            if len(messages) != 0:
-                messages.reverse()
-                f = codecs.open('static/prefabs/prefabmesend.html', encoding='utf-8', mode='r')
-                prefabme = f.read()
-                f.close()
-                f = codecs.open('static/prefabs/prefabIsend.html', encoding='utf-8', mode='r')
-                prefabI = f.read()
-                f.close()
-                for mes in messages:
-                    if mes['От'] == user['ID']:
-                        prefabTEMP = prefabI
-                        prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
-                        prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
-                    else:
-                        prefabTEMP = prefabme
-                        prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
-                        prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
-                        prefabTEMP = prefabTEMP.replace('{{NAME}}', userM['Имя'])
-                    allMessages += prefabTEMP
+                toid = -100
+                messages = WorkWithDB.getMessage(999, user['ID'], -100).listRes
+                userinfo = 'Чат с Тимохой!'
+                counter = 'Всего ' + str(len(messages)) + ' сообщений'
+                photo2 = photo2.replace('{{PHOTO}}', "/images/bot.jpg")
+                if len(messages) != 0:
+                    messages.reverse()
+                    f = codecs.open('static/prefabs/prefabmesend.html', encoding='utf-8', mode='r')
+                    prefabme = f.read()
+                    f.close()
+                    f = codecs.open('static/prefabs/prefabIsend.html', encoding='utf-8', mode='r')
+                    prefabI = f.read()
+                    f.close()
+                    for mes in messages:
+                        if mes['От'] == user['ID']:
+                            prefabTEMP = prefabI
+                            prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
+                            prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
+                        else:
+                            prefabTEMP = prefabme
+                            prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
+                            prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
+                            prefabTEMP = prefabTEMP.replace('{{NAME}}', 'Тимоха')
+                        allMessages += prefabTEMP
 
 
         
@@ -644,6 +684,8 @@ def messages():
             prefab = f.read()
             f.close()
             for idUser in ids:
+                if idUser == -100:
+                    continue
                 prefabTEMP = prefab
                 userM = WorkWithDB.FoundUserInDatabaseForID(idUser)
                 if userM['Фотография'] == 'Стандарт':
@@ -655,6 +697,17 @@ def messages():
                 prefabTEMP = prefabTEMP.replace('{{NAME}}', name)
                 prefabTEMP = prefabTEMP.replace('{{URL}}', '/messages?to=' + str(userM['ID']))
                 resUSERS += prefabTEMP
+
+
+        #БОТ:
+        prefabTEMP = prefab
+        photo = "/images/bot.jpg"
+        prefabTEMP = prefabTEMP.replace('{{PHOTO}}', photo)
+        name = "Бот Тимоха"
+        prefabTEMP = prefabTEMP.replace('{{NAME}}', name)
+        prefabTEMP = prefabTEMP.replace('{{URL}}', '/messages?to=bot')
+        resUSERS += prefabTEMP
+        #/БОТ
 
         idnow = request.args.get('to')
         userinfo = ''
@@ -674,35 +727,62 @@ def messages():
             counter = 'слева'
             photo2 = ''
         else:
-            userM = WorkWithDB.FoundUserInDatabaseForID(idnow)
-            toid = userM['ID']
-            messages = WorkWithDB.getMessage(999, user['ID'], int(idnow)).listRes
-            userinfo = 'Чат с ' + userM['Фамилия'] + ' ' + userM['Имя']
-            counter = 'Всего ' + str(len(messages)) + ' сообщений'
-            if userM['Фотография'] == 'Стандарт':
-                photo2 = photo2.replace('{{PHOTO}}', "https://api.adorable.io/avatars/234/" + str(userM['ID']))
-            else:
-                photo2 = photo2.replace('{{PHOTO}}', "/images/" + str(userM['ID']) + ".png")
+            if idnow != 'bot':
+                userM = WorkWithDB.FoundUserInDatabaseForID(idnow)
+                toid = userM['ID']
+                messages = WorkWithDB.getMessage(999, user['ID'], int(idnow)).listRes
+                userinfo = 'Чат с ' + userM['Фамилия'] + ' ' + userM['Имя']
+                counter = 'Всего ' + str(len(messages)) + ' сообщений'
+                if userM['Фотография'] == 'Стандарт':
+                    photo2 = photo2.replace('{{PHOTO}}', "https://api.adorable.io/avatars/234/" + str(userM['ID']))
+                else:
+                    photo2 = photo2.replace('{{PHOTO}}', "/images/" + str(userM['ID']) + ".png")
 
-            if len(messages) != 0:
-                messages.reverse()
-                f = codecs.open('static/prefabs/prefabmesend.html', encoding='utf-8', mode='r')
-                prefabme = f.read()
-                f.close()
-                f = codecs.open('static/prefabs/prefabIsend.html', encoding='utf-8', mode='r')
-                prefabI = f.read()
-                f.close()
-                for mes in messages:
-                    if mes['От'] == user['ID']:
-                        prefabTEMP = prefabI
-                        prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
-                        prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
-                    else:
-                        prefabTEMP = prefabme
-                        prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
-                        prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
-                        prefabTEMP = prefabTEMP.replace('{{NAME}}', userM['Имя'])
-                    allMessages += prefabTEMP
+                if len(messages) != 0:
+                    messages.reverse()
+                    f = codecs.open('static/prefabs/prefabmesend.html', encoding='utf-8', mode='r')
+                    prefabme = f.read()
+                    f.close()
+                    f = codecs.open('static/prefabs/prefabIsend.html', encoding='utf-8', mode='r')
+                    prefabI = f.read()
+                    f.close()
+                    for mes in messages:
+                        if mes['От'] == user['ID']:
+                            prefabTEMP = prefabI
+                            prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
+                            prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
+                        else:
+                            prefabTEMP = prefabme
+                            prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
+                            prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
+                            prefabTEMP = prefabTEMP.replace('{{NAME}}', userM['Имя'])
+                        allMessages += prefabTEMP
+
+            else:
+                toid = -100
+                messages = WorkWithDB.getMessage(999, user['ID'], -100).listRes
+                userinfo = 'Чат с Тимохой!'
+                counter = 'Всего ' + str(len(messages)) + ' сообщений'
+                photo2 = photo2.replace('{{PHOTO}}', "/images/bot.jpg")
+                if len(messages) != 0:
+                    messages.reverse()
+                    f = codecs.open('static/prefabs/prefabmesend.html', encoding='utf-8', mode='r')
+                    prefabme = f.read()
+                    f.close()
+                    f = codecs.open('static/prefabs/prefabIsend.html', encoding='utf-8', mode='r')
+                    prefabI = f.read()
+                    f.close()
+                    for mes in messages:
+                        if mes['От'] == user['ID']:
+                            prefabTEMP = prefabI
+                            prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
+                            prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
+                        else:
+                            prefabTEMP = prefabme
+                            prefabTEMP = prefabTEMP.replace('{{DATE}}', mes['Дата и время'])
+                            prefabTEMP = prefabTEMP.replace('{{MESSAGE}}', mes['Сообщение'])
+                            prefabTEMP = prefabTEMP.replace('{{NAME}}', 'Тимоха')
+                        allMessages += prefabTEMP
         
         prefab = prefab.replace('{{WITH}}', userinfo)
         prefab = prefab.replace('{{COUNT}}', counter)
@@ -739,6 +819,9 @@ def sendmess():
     user = WorkWithDB.FoundUserInDatabaseForToken(fromtoken)
     if user != None:
         WorkWithDB.sendMessege(user['ID'], int(toid), message)
+        if toid == '-100':
+            mesBot = BotGraf(user['ID'], message)
+            WorkWithDB.sendMessege(-100, user['ID'], mesBot)
         return '1'
     return '0'
 
@@ -749,7 +832,7 @@ def getmessagesize():
     user = WorkWithDB.FoundUserInDatabaseForToken(token)
     if user != None:
         mes = WorkWithDB.getMessage(999, user['ID'], int(toid)).listRes
-        return str(len(mes));
+        return str(len(mes))
     return '-1'
 
 @app.route("/api/newnote")
