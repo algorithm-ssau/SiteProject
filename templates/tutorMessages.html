@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Личный кабинет репетитора</title>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{{ url_for("static", filename="exitScript.js") }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="lkstyle.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="msgstyle.css") }}">
+    <!-- <link rel="stylesheet" href="{{ url_for("static", filename="script.js") }}"> -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400;300" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital@1&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width">
+  </head>
+
+  <body>
+
+    <header>
+        <div class="logo">
+          <p>Кот ученый — сайт по поиску репетитора</p>
+        </div>
+
+        <div class="icon-menu">
+          <img src="{{ url_for("static", filename="menu-ham-icon.png") }}">
+        </div>
+
+        <div class="menu">
+      
+            <div class="icon-close">
+              <img src="{{ url_for("static", filename="close-btn.png") }}">
+            </div>
+      
+            <ul>
+              <li><a href="/profile">Мой профиль</a></li>
+              <li><a href="/search">Поиск ученика</a></li>
+              <li><a href="/messages">Мои сообщения</a></li>
+              <li><a href="/timetable">Мое расписание</a></li>
+            </ul>
+
+            
+
+        </div>
+
+    </header>
+
+    <div class="exit">
+      <input type="button" value="Выход" class="exitbtn" onclick="exitOnProfile();"> 
+  </div>
+
+    <div class="messages">
+      <div class='content_messages'>
+        <div id="container">
+            <aside>
+                <ul>
+                  {{USERS}}
+                </ul>
+            </aside>
+            <main>
+              <header>
+                {{ItUser}}
+              </header>
+              <ul id="chat">
+                {{MESSAGES}}
+              </ul>
+              <footer>
+                <textarea id="inputMessage" placeholder="Ваше сообщение..."></textarea>
+                <input type="button" value="Отправить" class="searchbtn" onclick="sendMes({{TOID}});">
+              </footer>
+            </main>
+          </div>
+    </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="{{ url_for("static", filename="script.js") }}"></script>
+    <script type="text/javascript">
+      var block = document.getElementById("chat");
+      block.scrollTop = block.scrollHeight;
+    </script>
+    <script src="{{ url_for("static", filename="sendMessage.js") }}"></script>
+    <script type="text/javascript">
+      toid2={{TOID}};
+    </script>
+  </body>
+</html>

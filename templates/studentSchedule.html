@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Личный кабинет ученика</title>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{{ url_for("static", filename="exitScript.js") }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="lkstyle.css") }}">
+    <!-- <link rel="stylesheet" href="{{ url_for("static", filename="script.js") }}"> -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400;300" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital@1&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width">
+  </head>
+
+  <body>
+
+    <header>
+        <div class="logo">
+          <p>Кот ученый — сайт по поиску репетитора</p>
+        </div>
+
+        <div class="icon-menu">
+          <img src="{{ url_for("static", filename="menu-ham-icon.png") }}">
+        </div>
+
+        <div class="menu">
+      
+            <div class="icon-close">
+              <img src="{{ url_for("static", filename="close-btn.png") }}">
+            </div>
+      
+            <ul>
+              <li><a href="/profile">Мой профиль</a></li>
+              <li><a href="/search">Поиск репетитора</a></li>
+              <li><a href="/messages">Мои сообщения</a></li>
+              <li><a href="/timetable">Мое расписание</a></li>
+            </ul>
+
+        </div>
+
+    </header>
+
+    <div class="exit">
+        <input type="button" value="Выход" class="exitbtn" onclick="exitOnProfile();"> 
+    </div>
+
+    <div class="schedule">
+      <table>
+        <thead>
+          <tr>
+            <td>Дата</td>
+            <td>Занятие</td>
+          </tr>
+        </thead>
+        <tbody id="tasklist">
+          {{REC}}
+        </tbody>
+      </table>
+      <div class="create">
+        <input type="button" value="Добавить запись" class="createbtn" onclick="newNode();"> 
+      </div>
+      <div class="save_change">
+        <input type="button" value="Сохранить" class="changebtn" onclick="save();"> 
+      </div>
+    </div>
+    
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  </body>
+  <script src="{{ url_for("static", filename="script.js") }}"></script>
+  <script src="{{ url_for("static", filename="newnote.js") }}"></script>
+  <script src="{{ url_for("static", filename="savenotes.js") }}"></script>
+</html>
