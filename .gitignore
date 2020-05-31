@@ -1,3 +1,4 @@
 /static/ProfilesImages/*
+!/static/ProfilesImages/bot.jpg
 /__pycache__/*
 /.vscode/*
