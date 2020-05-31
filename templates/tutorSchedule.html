@@ -55,30 +55,21 @@
             <td>Занятие</td>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td><textarea name="date" style="width: 150px"></textarea></td>
-            <td><textarea name="lesson" style="width: 150px"></textarea></td>
-          </tr>
-          <tr>
-            <td><textarea name="date" style="width: 150px"></textarea></td>
-            <td><textarea name="lesson" style="width: 150px"></textarea></td>
-          </tr>
-          <tr>
-            <td><textarea name="date" style="width: 150px"></textarea></td>
-            <td><textarea name="lesson" style="width: 150px"></textarea></td>
-          </tr>
+        <tbody id="tasklist">
+          {{REC}}
         </tbody>
       </table>
       <div class="create">
-        <input type="button" value="Добавить запись" class="createbtn"> 
+        <input type="button" value="Добавить запись" class="createbtn" onclick="newNode();"> 
       </div>
       <div class="save_change">
-        <input type="button" value="Сохранить" class="changebtn"> 
+        <input type="button" value="Сохранить" class="changebtn" onclick="save();"> 
       </div>
     </div>
     
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
     <script src="{{ url_for("static", filename="script.js") }}"></script>
+    <script src="{{ url_for("static", filename="newnote.js") }}"></script>
+    <script src="{{ url_for("static", filename="savenotes.js") }}"></script>
   </body>
 </html>
