@@ -570,10 +570,10 @@ def messages():
     ids = WorkWithDB.foundAllUsersDialog(user['ID'])
     resUSERS = ''
     if user['Роль'] == 'Репетитор':
+        f = codecs.open('static/prefabs/prefabUserInTutorDialogs.html', encoding='utf-8', mode='r')
+        prefab = f.read()
+        f.close()
         if ids != None and len(ids) != 0:
-            f = codecs.open('static/prefabs/prefabUserInTutorDialogs.html', encoding='utf-8', mode='r')
-            prefab = f.read()
-            f.close()
             for idUser in ids:
                 if idUser == -100:
                     continue
@@ -684,10 +684,10 @@ def messages():
             
         return render_template("tutorMessages.html", USERS = Markup(resUSERS), ItUser = Markup(userNow), MESSAGES = Markup(allMessages), TOID = toid)
     else:
+        f = codecs.open('static/prefabs/prefabUserInStudentDialogs.html', encoding='utf-8', mode='r')
+        prefab = f.read()
+        f.close()
         if ids != None and len(ids) != 0:
-            f = codecs.open('static/prefabs/prefabUserInStudentDialogs.html', encoding='utf-8', mode='r')
-            prefab = f.read()
-            f.close()
             for idUser in ids:
                 if idUser == -100:
                     continue
