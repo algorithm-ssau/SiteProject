@@ -37,6 +37,7 @@ else{
 }
 
 function updateMessages(){
+    if (toid2 == -100) return;
     var requestAPI = new XMLHttpRequest();
     requestAPI.onreadystatechange = function(){
         if(requestAPI.readyState == 4 && requestAPI.status == 200){
