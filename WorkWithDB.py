@@ -644,8 +644,9 @@ class WorkWithDB():
             note['idNote'] = int(WorkWithDB.getNewIDforNote())
             collect.insert_one(note)
 
-            res.setErrorMessage("Операция выполнена успешно")
+            res.setErrorMessage(str(note['idNote']))
             res.setIsGoodVariable(True)
+
 
         except Exception:
             res.setIsGoodVariable(False)
