@@ -2,6 +2,7 @@ import pymongo, hashlib
 from pymongo import MongoClient
 import traceback
 import time, requests
+import datetime
 
 class Result():
     
@@ -468,7 +469,8 @@ class WorkWithDB():
     def sendMessege(IDuserFrom, IDuserTo, message):
         res = Result(False," ",[])
         try:
-            data = time.ctime(int(requests.get("https://time100.ru/api").text)) + ' (Samara Time)'
+            now = datetime.datetime.now()
+            data = now.strftime("%d-%m-%Y %H:%M") + '(Samara Time)'
             client = MongoClient()
             db = client['UsersDB']
             listID = [IDuserFrom, IDuserTo]
